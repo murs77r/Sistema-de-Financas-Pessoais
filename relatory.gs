@@ -2086,7 +2086,7 @@ function gerarHTMLconjunto_5291(htmlCCRealizadas, htmlCCIncidentes, htmlSaldo, i
 
 function processarGemini_5312(dados_9140, dados1243 = undefined) {
     try {
-        const API_KEY_2957 = "AIzaSyDeEOObnq1fkTAR-B1ZmWlNb9XtrvS8O5c";
+        const API_KEY_2957 = gemini_id();
 
         const payload_9725 = {
             contents: [
