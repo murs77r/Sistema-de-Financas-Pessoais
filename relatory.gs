@@ -23,7 +23,7 @@ function gerarRelatorio_4752(tempo_8213, tipo_2956, operador_1853, datainicial_9
 
     const imprimir_3857 = false;
     const filtros1214 = 'Mostrar';
-    const spreadsheetId_9164 = 'ID DA PLANILHA';
+    const spreadsheetId_9164 = '1-8UeMTkWKh6hnZvAyfddLnDoVgH5mLCmw9BepxPwLaE';
     const ss_6392 = SpreadsheetApp.openById(spreadsheetId_9164);
 
     const abaderelatorios_4323 = ss_6392.getSheetByName("Gerador de Relatórios");
@@ -106,7 +106,7 @@ function gerarRelatorio_4752(tempo_8213, tipo_2956, operador_1853, datainicial_9
             }
 
             const dadosOrdenadosCCRealizadas = ordenarDados_2497(dadosFiltradosCCRealizadas, colunas_1495, 'Cartão de Crédito');
-            const htmlCCRealizadas = gerarHTML_3618(dadosOrdenadosCCRealizadas, colunas_1495, 'Cartão de Crédito', tempo_8213, operador_1853, datainicial_9531, datafinal_4692, cartaoCredito_7329, contaFinanceira_3918, imprimir_3857, lancamentocartao_3233, "Segmentado", procedimentoSaldo_5147, procedimentoCartao_8964, idRecorrencia_2759, categoria_4108, status_6925, relevanteImpostoRenda_5831, descricao_6485, operacaoSaldo_7294, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, mesAnoUltimoMes_3523);
+            const htmlCCRealizadas = gerarHTML_3618(dadosOrdenadosCCRealizadas, colunas_1495, 'Cartão de Crédito', tempo_8213, operador_1853, datainicial_9531, datafinal_4692, cartaoCredito_7329, contaFinanceira_3918, imprimir_3857, lancamentocartao_3233, "Segmentado", procedimentoSaldo_5147, procedimentoCartao_8964, idRecorrencia_2759, categoria_4108, status_6925, relevanteImpostoRenda_5831, descricao_6485, operacaoSaldo_7294, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, undefined, mesAnoUltimoMes_3523);
 
 
             let dadosFiltradosCCIncidentes = [];
@@ -116,7 +116,7 @@ function gerarRelatorio_4752(tempo_8213, tipo_2956, operador_1853, datainicial_9
             }
 
             const dadosOrdenadosCCIncidentes = ordenarDados_2497(dadosFiltradosCCIncidentes, colunas_1495, 'Cartão de Crédito');
-            const htmlCCIncidentes = gerarHTML_3618(dadosOrdenadosCCIncidentes, colunas_1495, 'Cartão de Crédito', tempo_8213, operador_1853, datainicial_9531, datafinal_4692, cartaoCredito_7329, contaFinanceira_3918, imprimir_3857, lancamentocartao_3233, "Segmentado", procedimentoSaldo_5147, procedimentoCartao_8964, idRecorrencia_2759, categoria_4108, status_6925, relevanteImpostoRenda_5831, descricao_6485, operacaoSaldo_7294, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, mesAnoUltimoMes_3523, 'Incidentes');
+            const htmlCCIncidentes = gerarHTML_3618(dadosOrdenadosCCIncidentes, colunas_1495, 'Cartão de Crédito', tempo_8213, operador_1853, datainicial_9531, datafinal_4692, cartaoCredito_7329, contaFinanceira_3918, imprimir_3857, lancamentocartao_3233, "Segmentado", procedimentoSaldo_5147, procedimentoCartao_8964, idRecorrencia_2759, categoria_4108, status_6925, relevanteImpostoRenda_5831, descricao_6485, operacaoSaldo_7294, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, undefined, mesAnoUltimoMes_3523, 'Incidentes');
 
             let dadosFiltradosSaldo_2804 = [];
             for (let i = 0; i < dadosSaldo.length; i += batchSize) {
@@ -2086,7 +2086,7 @@ function gerarHTMLconjunto_5291(htmlCCRealizadas, htmlCCIncidentes, htmlSaldo, i
 
 function processarGemini_5312(dados_9140, dados1243 = undefined) {
     try {
-        const API_KEY_2957 = "ID DO GOOGLE GEMINI";
+        const API_KEY_2957 = "AIzaSyDeEOObnq1fkTAR-B1ZmWlNb9XtrvS8O5c";
 
         const payload_9725 = {
             contents: [
@@ -2097,7 +2097,7 @@ function processarGemini_5312(dados_9140, dados1243 = undefined) {
                             text: dados_9140
                         },
                         {
-                            text: (dados1243 && dados1243 === 'HTML Conjunto') ? "Você é uma Inteligência Artificial especializada em análise de finanças pessoais, responsável por fornecer recomendações com base nas transações financeiras do usuário. As transações já estão categorizadas e incluem totais de receitas e despesas, tanto no Cartão de Crédito quanto em Saldo. Nunca critique a base de dados fornecidas e nunca peça por mais dados e nem dê sugestões para que os relatórios melhorem. Com base nesses dados, forneça recomendações práticas e viáveis para melhorar a saúde financeira, bem como insights acionáveis relacionados às transações. As Transações no Cartão de Crédito correspondem exatamente às faturas pagas em Transações com Saldo. Lembre-se que todas as respostas devem ser feitas com base nos dados fornecidos, então não inventes novidades. Caso o nome de alguma transação precise ser citado, sempre coloque-o em maiúsculo. Caso alguma categoria seja citada, sempre coloque-a em maiúsculo e entre tags HTML <b>. Faça uso descente da norma culta da Língua Portuguesa. A resposta não deve conter uso de markdown ou outras linguagens de marcação sem que tenha sido extremamente citado, em DOIS parágrafos de 600 a 1000 caracteres cada (separados por uma única tag  HTML <br> (quebrar linha)), ambos corridos e sem tópicos (sendo que o primeiro deve tratar dos insights dos dados, com uma análise detalhada, e o segundo parágrafo deve tratar das recomendações a serem tomadas). Também é importante não ter título algum, somente texto." : "Você é uma Inteligência Artificial especializada em análise de finanças pessoais, responsável por fornecer recomendações com base nas transações financeiras do usuário. As transações já estão categorizadas e incluem totais de receitas e despesas. Nunca critique a base de dados fornecidas e nunca peça por mais dados e nem dê sugestões para que os relatórios melhorem. Com base nesses dados, forneça recomendações práticas e viáveis para melhorar a saúde financeira, bem como insights acionáveis relacionados às transações. Lembre-se que todas as respostas devem ser feitas com base nos dados fornecidos, então não inventes novidades. Caso o nome de alguma transação precise ser citado, sempre coloque-o em maiúsculo. Caso alguma categoria seja citada, sempre coloque-a em maiúsculo e entre tags HTML <b>. Faça uso descente da norma culta da Língua Portuguesa. A resposta não deve conter uso de markdown ou outras linguagens de marcação sem que tenha sido extremamente citado, em DOIS parágrafos de 300 a 500 caracteres cada (separados por uma única tag HTML <br> (quebrar linha)), ambos corridos e sem tópicos (sendo que o primeiro deve tratar dos insights dos dados, com uma análise detalhada, e o segundo parágrafo deve tratar das recomendações a serem tomadas). Também é importante não ter título algum, somente texto."
+                            text: (dados1243 && dados1243 === 'HTML Conjunto') ? "Você é uma Inteligência Artificial especializada em análise de finanças pessoais, responsável por fornecer recomendações com base nas transações financeiras do usuário. As transações já estão categorizadas e incluem totais de receitas e despesas, tanto no Cartão de Crédito quanto em Saldo. Nunca critique a base de dados fornecidas e nunca peça por mais dados e nem dê sugestões para que os relatórios melhorem. Com base nesses dados, forneça recomendações práticas e viáveis para melhorar a saúde financeira, bem como insights acionáveis relacionados às transações. As Transações no Cartão de Crédito correspondem exatamente às faturas pagas em Transações com Saldo. Lembre-se que todas as respostas devem ser feitas com base nos dados fornecidos, então não inventes novidades. Caso o nome de alguma transação precise ser citado, sempre coloque-o em maiúsculo. Faça uso descente da norma culta da Língua Portuguesa. A resposta pode conter o uso da tag HTML <b> (negrito), sem uso de markdown ou outras linguagens de marcação, em DOIS parágrafos de 600 a 1000 caracteres cada (separados por uma única tag  HTML <br> (quebrar linha)), ambos corridos e sem tópicos (sendo que o primeiro deve tratar dos insights dos dados, com uma análise detalhada, e o segundo parágrafo deve tratar das recomendações a serem tomadas). Também é importante não ter título algum, somente texto." : "Você é uma Inteligência Artificial especializada em análise de finanças pessoais, responsável por fornecer recomendações com base nas transações financeiras do usuário. As transações já estão categorizadas e incluem totais de receitas e despesas. Nunca critique a base de dados fornecidas e nunca peça por mais dados e nem dê sugestões para que os relatórios melhorem. Com base nesses dados, forneça recomendações práticas e viáveis para melhorar a saúde financeira, bem como insights acionáveis relacionados às transações. Lembre-se que todas as respostas devem ser feitas com base nos dados fornecidos, então não inventes novidades. Caso o nome de alguma transação precise ser citado, sempre coloque-o em maiúsculo. Faça uso descente da norma culta da Língua Portuguesa. A resposta pode conter o uso da tag HTML <b> (negrito), sem uso de markdown ou outras linguagens de marcação, em DOIS parágrafos de 300 a 500 caracteres cada (separados por uma única tag HTML <br> (quebrar linha)), ambos corridos e sem tópicos (sendo que o primeiro deve tratar dos insights dos dados, com uma análise detalhada, e o segundo parágrafo deve tratar das recomendações a serem tomadas). Também é importante não ter título algum, somente texto."
                         }
                     ]
                 }
@@ -2595,7 +2595,7 @@ function doPost(e) {
     const insightgerado_1134 = validarParametro_5243(params_5937.insightgerado);
     const imprimir_7639 = true;
 
-    const spreadsheetId_4918 = 'ID DA PLANILHA';
+    const spreadsheetId_4918 = '1-8UeMTkWKh6hnZvAyfddLnDoVgH5mLCmw9BepxPwLaE';
     const ss_8371 = SpreadsheetApp.openById(spreadsheetId_4918);
     const sheets_2847 = {
         'Transações com Saldo': ss_8371.getSheetByName('Transações com Saldo'),
@@ -2670,7 +2670,7 @@ function doPost(e) {
             }
 
             const dadosOrdenadosCCRealizadas = ordenarDados_2497(dadosFiltradosCCRealizadas, colunas_9158);
-            const htmlCCRealizadas = gerarHTML_3618(dadosOrdenadosCCRealizadas, colunas_9158, 'Cartão de Crédito', tempo_4826, operador_6385, datainicial_2847, datafinal_7429, cartaoCredito_5930, contaFinanceira_4692, imprimir_7639, lancamentocartao_3233, condicaodegeracao_6291, procedimentoSaldo_3916, procedimentoCartao_8205, idRecorrencia_4719, categoria_6832, status_5729, relevanteImpostoRenda_2916, descricao_9571, operacaoSaldo_8429, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, mesAnoUltimoMes_3523);
+            const htmlCCRealizadas = gerarHTML_3618(dadosOrdenadosCCRealizadas, colunas_9158, 'Cartão de Crédito', tempo_4826, operador_6385, datainicial_2847, datafinal_7429, cartaoCredito_5930, contaFinanceira_4692, imprimir_7639, lancamentocartao_3233, condicaodegeracao_6291, procedimentoSaldo_3916, procedimentoCartao_8205, idRecorrencia_4719, categoria_6832, status_5729, relevanteImpostoRenda_2916, descricao_9571, operacaoSaldo_8429, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, undefined, mesAnoUltimoMes_3523);
 
             let dadosFiltradosCCIncidentes = [];
             for (let i = 0; i < dadosCartao.length; i += batchSize) {
@@ -2679,7 +2679,7 @@ function doPost(e) {
             }
 
             const dadosOrdenadosCCIncidentes = ordenarDados_2497(dadosFiltradosCCIncidentes, colunas_9158);
-            const htmlCCIncidentes = gerarHTML_3618(dadosOrdenadosCCIncidentes, colunas_9158, 'Cartão de Crédito', tempo_4826, operador_6385, datainicial_2847, datafinal_7429, cartaoCredito_5930, contaFinanceira_4692, imprimir_7639, lancamentocartao_3233, condicaodegeracao_6291, procedimentoSaldo_3916, procedimentoCartao_8205, idRecorrencia_4719, categoria_6832, status_5729, relevanteImpostoRenda_2916, descricao_9571, operacaoSaldo_8429, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, mesAnoUltimoMes_3523, 'Incidentes');
+            const htmlCCIncidentes = gerarHTML_3618(dadosOrdenadosCCIncidentes, colunas_9158, 'Cartão de Crédito', tempo_4826, operador_6385, datainicial_2847, datafinal_7429, cartaoCredito_5930, contaFinanceira_4692, imprimir_7639, lancamentocartao_3233, condicaodegeracao_6291, procedimentoSaldo_3916, procedimentoCartao_8205, idRecorrencia_4719, categoria_6832, status_5729, relevanteImpostoRenda_2916, descricao_9571, operacaoSaldo_8429, filtros1214, parcelas_2321, qtdeparcelas_2143, undefined, undefined, mesAnoUltimoMes_3523, 'Incidentes');
 
             let dadosFiltradosSaldo_8532 = [];
             for (let i = 0; i < dadosSaldo.length; i += batchSize) {
