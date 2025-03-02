@@ -1,6 +1,11 @@
 function criarouatualizarcalendarioevento_5278(dataProgramada, identificador, descricao, apresentacao, timestring) {
     if (typeof dataProgramada === 'string' || typeof dataProgramada === 'number') {
-        dataProgramada = new Date(dataProgramada);
+        if (typeof dataProgramada === 'string' && dataProgramada.includes('/')) {
+            const [day, month, year] = dataProgramada.split('/');
+            dataProgramada = new Date(year, month - 1, day);
+        } else {
+          dataProgramada = new Date(dataProgramada);
+        }
     }
     if (!(dataProgramada instanceof Date)) {
         return;
@@ -43,6 +48,18 @@ function criarouatualizarcalendarioevento_5278(dataProgramada, identificador, de
 }
 
 function criarouatualizareventodehoje_9876(dataProgramada, identificador, descricao, apresentacao, time_string) {
+    if (typeof dataProgramada === 'string' || typeof dataProgramada === 'number') {
+        if (typeof dataProgramada === 'string' && dataProgramada.includes('/')) {
+            const [day, month, year] = dataProgramada.split('/');
+            dataProgramada = new Date(year, month - 1, day);
+        } else {
+            dataProgramada = new Date(dataProgramada);
+        }
+    }
+    if (!(dataProgramada instanceof Date)) {
+        return;
+    }
+    
     const titulo_evento = apresentacao;
     const data_hora_inicio = new Date(dataProgramada);
     const agora = new Date();
@@ -114,4 +131,3 @@ function deletareventoporidentificador_4739(identificador) {
         }
     }
 }
-
