@@ -23,8 +23,7 @@ function gerarRelatorio_4752(tempo_8213, tipo_2956, operador_1853, datainicial_9
 
     const imprimir_3857 = false;
     const filtros1214 = 'Mostrar';
-    const spreadsheetId_9164 = '1-8UeMTkWKh6hnZvAyfddLnDoVgH5mLCmw9BepxPwLaE';
-    const ss_6392 = SpreadsheetApp.openById(spreadsheetId_9164);
+    const ss_6392 = SpreadsheetApp.openById(spreedsheet_id());
 
     const abaderelatorios_4323 = ss_6392.getSheetByName("Gerador de Relatórios");
 
@@ -2595,8 +2594,7 @@ function doPost(e) {
     const insightgerado_1134 = validarParametro_5243(params_5937.insightgerado);
     const imprimir_7639 = true;
 
-    const spreadsheetId_4918 = '1-8UeMTkWKh6hnZvAyfddLnDoVgH5mLCmw9BepxPwLaE';
-    const ss_8371 = SpreadsheetApp.openById(spreadsheetId_4918);
+    const ss_8371 = SpreadsheetApp.openById(spreedsheet_id());
     const sheets_2847 = {
         'Transações com Saldo': ss_8371.getSheetByName('Transações com Saldo'),
         'Transações com Cartão de Crédito': ss_8371.getSheetByName('Transações com Cartão de Crédito')
