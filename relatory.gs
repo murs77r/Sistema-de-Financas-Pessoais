@@ -1219,7 +1219,7 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                 html_2951 += insightgerado_9111
 
                 if (imprimir_3857 === false) {
-                    html_2951 = html_2951.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encodeStringToBase64UTF8_4829(`${contaFinanceira_3918 ? '&contaFinanceira=' + contaFinanceira_3918 : ''}${cartaoCredito_7329 ? '&cartaoCredito=' + cartaoCredito_7329 : ''}${lancamentocartao_3233 ? '&lancamentocartao=' + lancamentocartao_3233 : ''}${descricao_6485 ? '&descricao=' + descricao_6485 : ''}${procedimentoSaldo_5147 ? '&procedimentoSaldo=' + procedimentoSaldo_5147 : ''}${operacaoSaldo_7294 ? '&operacaoSaldo=' + operacaoSaldo_7294 : ''}${datainicial_9531 ? '&datainicial=' + datainicial_9531 : ''}${datafinal_4692 ? '&datafinal=' + datafinal_4692 : ''}${tipo_2956 ? '&tipo=' + tipo_2956 : ''}${tempo_8213 ? '&tempo=' + tempo_8213 : ''}${operador_1853 ? '&operador=' + operador_1853 : ''}${procedimentoCartao_8964 ? '&procedimentoCartao=' + procedimentoCartao_8964 : ''}${categoria_4108 ? '&categoria=' + categoria_4108 : ''}${idRecorrencia_2759 ? '&idRecorrencia=' + idRecorrencia_2759 : ''}${relevanteImpostoRenda_5831 ? '&relevanteImpostoRenda=' + relevanteImpostoRenda_5831 : ''}${status_6925 ? '&status=' + status_6925 : ''}${qtdeparcelas_2143 ? '&qtdeparcelas=' + qtdeparcelas_2143 : ''}${parcelas_2321 ? '&parcelamento=' + parcelas_2321 : ''}${gerarInsights_1344 ? '&recomendacoes=' + gerarInsights_1344 : ''}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
+                    html_2951 = html_2951.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`${contaFinanceira_3918 ? '&contaFinanceira=' + contaFinanceira_3918 : ''}${cartaoCredito_7329 ? '&cartaoCredito=' + cartaoCredito_7329 : ''}${lancamentocartao_3233 ? '&lancamentocartao=' + lancamentocartao_3233 : ''}${descricao_6485 ? '&descricao=' + descricao_6485 : ''}${procedimentoSaldo_5147 ? '&procedimentoSaldo=' + procedimentoSaldo_5147 : ''}${operacaoSaldo_7294 ? '&operacaoSaldo=' + operacaoSaldo_7294 : ''}${datainicial_9531 ? '&datainicial=' + datainicial_9531 : ''}${datafinal_4692 ? '&datafinal=' + datafinal_4692 : ''}${'tipo= + tipo_2956'}${tempo_8213 ? '&tempo=' + tempo_8213 : ''}${operador_1853 ? '&operador=' + operador_1853 : ''}${procedimentoCartao_8964 ? '&procedimentoCartao=' + procedimentoCartao_8964 : ''}${categoria_4108 ? '&categoria=' + categoria_4108 : ''}${idRecorrencia_2759 ? '&idRecorrencia=' + idRecorrencia_2759 : ''}${relevanteImpostoRenda_5831 ? '&relevanteImpostoRenda=' + relevanteImpostoRenda_5831 : ''}${status_6925 ? '&status=' + status_6925 : ''}${qtdeparcelas_2143 ? '&qtdeparcelas=' + qtdeparcelas_2143 : ''}${parcelas_2321 ? '&parcelamento=' + parcelas_2321 : ''}${gerarInsights_1344 ? '&recomendacoes=' + gerarInsights_1344 : ''}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
                 }
             }
 
@@ -2071,8 +2071,8 @@ function gerarHTMLconjunto_5291(htmlCCRealizadas, htmlCCIncidentes, htmlSaldo, i
 
         html_8520 += insightgerado_9111
 
-        if (imprimir_3857 === false) { 
-            html_8520 = html_8520.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encodeStringToBase64UTF8_4829(`tempo=${'Último Mês'}&tipo=${'Cartão de Crédito e Saldo'}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
+        if (imprimir_3857 === false) {
+            html_8520 = html_8520.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`tempo=${'Último Mês'}&tipo=${'Cartão de Crédito e Saldo'}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
         }
 
         html_8520 += `<p id="data-hora" style="display: none; text-align: center; font-size: 0.75rem; margin: 0px; margin-top: 23px; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;"><b>GERADO EM ${dataFormatadaparaapr_3946.toUpperCase()}</b></p>`
@@ -2753,12 +2753,41 @@ function validarParametro_5243(valor_9582) {
     return valorValidado_6294;
 }
 
-function encodeStringToBase64UTF8_4829(str_6390) {
+function encurtarUrlBase64_4829(str_6390) {
     const utf8Bytes_2847 = Utilities.newBlob(str_6390, "text/plain", "temp").getBytes();
+    const base64String_5117 = url_transacoes() + Utilities.base64EncodeWebSafe(utf8Bytes_2847);
+    const workerURL = worker_url();
+    const apiToken = secrettoken_id();
+    const short = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-    const base64String_5937 = "https://transacoes.worker.class-one.com.br/?=" + Utilities.base64EncodeWebSafe(utf8Bytes_2847);
+    const payload = {
+        "metodo": "adicao",
+        "short": short,
+        "long": base64String_5117,
+        "token": apiToken
+    };
 
-    return base64String_5937;
+    const options = {
+        'method': 'post',
+        'contentType': 'application/json',
+        'payload': JSON.stringify(payload),
+        'muteHttpExceptions': true
+    };
+
+    try {
+        const response = UrlFetchApp.fetch(workerURL, options);
+        const responseCode = response.getResponseCode();
+        console.log(responseCode)
+
+        if (responseCode >= 200 && responseCode < 300) {
+            return response.getContentText();
+        } else {
+            return base64String_5117;
+        }
+    } catch (e) {
+        console.log('Erro' + e)
+        return base64String_5117;
+    }
 }
 
 function gerarMensalmente_4325() {
