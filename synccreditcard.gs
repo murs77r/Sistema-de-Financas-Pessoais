@@ -1,5 +1,7 @@
 function verificar_ativador_externo_8765(gatilho_appsheet_9512) {
+    Utilities.sleep(15000);
     if (gatilho_appsheet_9512) {
+        console.log("Gatilho via Google AppSheet");
         sincronizarDadosEntreTabelas_7891()
     }
 }
