@@ -1,10 +1,3 @@
-function verificar_gatilho_appsheet_1195(gatilho_appsheet_2718) {
-    if (gatilho_appsheet_2718 !== "") {
-        console.log("Gatilho via Google AppSheet");
-        processarParcelamento_7394();
-    }
-}
-
 function processarParcelamento_7394(id_2412) {
     const startTime_8254 = new Date();
     const spreadsheetId_9571 = spreedsheet_id();
@@ -38,6 +31,23 @@ function processarParcelamento_7394(id_2412) {
     const transacaoIndex_5285 = transacoesIds_3852.indexOf(id_2412);
 
     if (transacaoIndex_5285 === -1) {
+        const allParcelamentos_3853 = sheets_5721.Parcelamentos.getDataRange().getValues();
+        const indicesParaExcluir_9374 = allParcelamentos_3853
+            .map((row, index) => row[colunas_1495.Parcelamentos.IDTransacao] === id_2412 ? index + 1 : -1)
+            .filter(row => row !== -1)
+            .sort((a, b) => b - a);
+
+        let linhasExcluidas_3957 = 0;
+        if (indicesParaExcluir_9374.length > 0) {
+            const batchSizeDelete_7392 = Math.min(Math.max(Math.round(indicesParaExcluir_9374.length * 0.25), 25), 250);
+            for (let i = 0; i < indicesParaExcluir_9374.length; i += batchSizeDelete_7392) {
+                const batch_9374 = indicesParaExcluir_9374.slice(i, i + batchSizeDelete_7392);
+                batch_9374.forEach(linha => {
+                    sheets_5721.Parcelamentos.deleteRow(linha);
+                    linhasExcluidas_3957++;
+                });
+            }
+        }
         return;
     }
 
