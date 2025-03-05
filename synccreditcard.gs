@@ -76,7 +76,6 @@ function sincronizarDadosEntreTabelas_7891() {
     }
 
     if (transacoesData_3185.length === 0) {
-        Logger.log("[ERRO] A planilha 'Transações com Saldo' está vazia.");
         return;
     }
 
@@ -174,11 +173,9 @@ function sincronizarDadosEntreTabelas_7891() {
                 indicesDuplicatas_9123.forEach(indice => {
                     if (indice !== indiceManter_8234) {
                         linhas_para_excluir_2148.push(indice + 2);
-                        Logger.log(`[EXCLUIR - DUPLICATA] Lote: ${idDoLote_9123} - Linha: ${indice + 2}, ID da Fatura: ${id_fatura_3698}`);
                     }
                 });
             }
-            Logger.log(`[DEBUG - ADICIONAR] Verificando fatura ID: ${id_fatura_3698}`); //Adicionado log antes da busca
 
             for (let i_7589 = 0; i_7589 < transacoesData_3185.length; i_7589++) {
                 const transacaoRow_1587 = transacoesData_3185[i_7589];
@@ -191,7 +188,6 @@ function sincronizarDadosEntreTabelas_7891() {
 
 
                 if (String(id_transacao_7582).trim() === String(id_fatura_3698).trim()) {
-                    Logger.log(`[DEBUG - ADICIONAR - BUSCA EXATA] Transação ENCONTRADA para fatura ID: ${id_fatura_3698}, ID da Transação Encontrada: ${id_transacao_7582}`); //Adicionado log caso encontre na busca exata
                     transacaoEncontrada_5698 = true;
                     transacaoLinha_8567 = transacaoRow_1587;
                     const atualizacoes_3579 = {};
@@ -297,7 +293,6 @@ function sincronizarDadosEntreTabelas_7891() {
                                     index: indiceManter_8234 + 2,
                                     values: linhaTemporaria_4587,
                                 });
-                                Logger.log(`[ATUALIZAR] - Linha: ${indiceManter_8234 + 2}, Dados: ${JSON.stringify(linhaTemporaria_4587)}`);
                             }
                         }
                     }
@@ -306,9 +301,6 @@ function sincronizarDadosEntreTabelas_7891() {
             }
 
             if (!transacaoEncontrada_5698 && valorFatura_3571 >= 0.01) {
-                Logger.log(`[DEBUG - ADICIONAR] ***INSERINDO NOVA TRANSAÇÃO***`); //Adicionado log de inserção
-                Logger.log(`[DEBUG - ADICIONAR] ID da Fatura: ${id_fatura_3698}`); //Adicionado log de inserção
-                Logger.log(`[DEBUG - ADICIONAR] Valor da Fatura: ${valorFatura_3571}`); //Adicionado log de inserção
                 const novaLinha_5896 = [];
                 novaLinha_5896[0] = String(id_fatura_3698).trim();
                 novaLinha_5896[1] = formaPagamento_2469 === "Débito Automático" ? "Pagamento - Débito Automático" : formaPagamento_2469 === "Boleto Bancário" ? "Pagamento - Boleto" : "Pagamento - Outros Tipos";
@@ -369,23 +361,9 @@ function sincronizarDadosEntreTabelas_7891() {
             const status_9531 = transacaoRow_6259[colunas_1495['Transações com Saldo']['Status']];
             const idFaturaTransacao_4567 = String(id_transacao_5896).trim();
 
-            Logger.log(`[DEBUG] ID da Transação: ${idFaturaTransacao_4567}`);
-            Logger.log(`[DEBUG] IDs de Faturas: ${JSON.stringify(faturasIds_1597)}`);
-            Logger.log(`[DEBUG] IDs para remover: ${JSON.stringify(Array.from(ids_para_remover_3156))}`);
-
             if (idFaturaTransacao_4567.includes("F")) {
                 if (ids_para_remover_3156.has(idFaturaTransacao_4567) || !faturasIds_1597.includes(idFaturaTransacao_4567)) {
                     if (status_9531 !== "Efetuado") {
-                        let motivoExclusao_7485 = "";
-
-                        if (ids_para_remover_3156.has(idFaturaTransacao_4567)) {
-                            motivoExclusao_7485 = "Valor da fatura menor que 0.01. Status: " + status_9531;
-                        } else if (!faturasIds_1597.includes(idFaturaTransacao_4567)) {
-                            motivoExclusao_7485 = "Fatura não encontrada na planilha de faturas. Status: " + status_9531;
-                        } else {
-                            motivoExclusao_7485 = "Motivo desconhecido";
-                        }
-                        Logger.log(`[EXCLUIR] Lote: ${idDoLote_9123} - Linha: ${i_7536 + 2}, ID da Fatura: ${idFaturaTransacao_4567}, Motivo: ${motivoExclusao_7485}`);
                         linhas_para_excluir_2148.push(i_7536 + 2);
                     }
                 }
@@ -467,4 +445,6 @@ function sincronizarDadosEntreTabelas_7891() {
 
         return horaFormatada;
     }
+
+    Logger.log(`Tempo de execução: ${formattedTime_9821}`);
 }
