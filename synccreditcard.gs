@@ -75,20 +75,22 @@ function sincronizarDadosEntreTabelas_7891() {
         transacoesData_3185 = transacoesData_3185.concat(transacoesBatch_6666);
     }
 
+    if (transacoesData_3185.length === 0) {
+        Logger.log("[ERRO] A planilha 'Transações com Saldo' está vazia.");
+        return;
+    }
+
     const ids_para_remover_3156 = new Set();
     const faturasDataCompleta_7777 = faturasSheet_1598.getDataRange().getValues();
-    const faturasFiltradas_3597 = faturasDataCompleta_7777.filter((row, index) => {
-        if (index === 0) {
-            return true;
-        }
-        const vencimento_2468 = row[colunas_1495['Faturas de Cartões de Crédito']['Vencimento']];
-        return vencimento_2468 >= today_6548;
-    });
+    const faturasFiltradas_3597 = faturasDataCompleta_7777.slice(1)
+        .filter(row => {
+            const vencimento_2468 = row[colunas_1495['Faturas de Cartões de Crédito']['Vencimento']];
+            return vencimento_2468 >= today_6548;
+        });
 
-     faturasFiltradas_3597.forEach((faturaRow, index) => {
-        if (index === 0) {
-            return;
-        }
+    const faturasIds_1597 = faturasFiltradas_3597.map(row => String(row[colunas_1495['Faturas de Cartões de Crédito']['ID']]).trim());
+
+    faturasFiltradas_3597.forEach((faturaRow, index) => {
         const valor_2589 = parseFloat(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura']]);
         const id_fatura_1478 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['ID']];
 
@@ -96,8 +98,6 @@ function sincronizarDadosEntreTabelas_7891() {
             ids_para_remover_3156.add(String(id_fatura_1478).trim());
         }
     });
-
-    const faturasIds_1597 = faturasFiltradas_3597.map(row => String(row[colunas_1495['Faturas de Cartões de Crédito']['ID']]).trim());
 
 
     for (let i_6294 = 1; i_6294 <= numRowsFaturas_1234; i_6294 += batchSize_3947) {
@@ -144,6 +144,41 @@ function sincronizarDadosEntreTabelas_7891() {
             const ultimaFatura_4279 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Última Atualização']];
 
             let transacaoEncontrada_5698 = false;
+            let transacaoLinha_8567 = null;
+            transacaoEncontrada_5698 = false; //Reinicialização da variável, conforme solicitado
+
+            const indicesDuplicatas_9123 = [];
+            for (let i = 0; i < transacoesData_3185.length; i++) {
+                const transacao = transacoesData_3185[i];
+                if (!transacao) {
+                    continue;
+                }
+                if (String(transacao[colunas_1495['Transações com Saldo']['ID']]).trim() === String(id_fatura_3698).trim()) {
+                    indicesDuplicatas_9123.push(i);
+                }
+            }
+
+            let indiceManter_8234 = -1;
+            if (indicesDuplicatas_9123.length > 0) {
+                indiceManter_8234 = indicesDuplicatas_9123.reduce((maxIndex, currentIndex) => {
+                    const linhaTransacaoAtual_7345 = transacoesData_3185[currentIndex];
+                    const linhaTransacaoMax_5678 = transacoesData_3185[maxIndex];
+
+                    if (!linhaTransacaoAtual_7345 || !linhaTransacaoMax_5678) {
+                        return Math.max(currentIndex, maxIndex);
+                    }
+
+                    return transacoesData_3185.indexOf(linhaTransacaoAtual_7345) > transacoesData_3185.indexOf(linhaTransacaoMax_5678) ? currentIndex : maxIndex;
+                }, indicesDuplicatas_9123[0]);
+
+                indicesDuplicatas_9123.forEach(indice => {
+                    if (indice !== indiceManter_8234) {
+                        linhas_para_excluir_2148.push(indice + 2);
+                        Logger.log(`[EXCLUIR - DUPLICATA] Lote: ${idDoLote_9123} - Linha: ${indice + 2}, ID da Fatura: ${id_fatura_3698}`);
+                    }
+                });
+            }
+            Logger.log(`[DEBUG - ADICIONAR] Verificando fatura ID: ${id_fatura_3698}`); //Adicionado log antes da busca
 
             for (let i_7589 = 0; i_7589 < transacoesData_3185.length; i_7589++) {
                 const transacaoRow_1587 = transacoesData_3185[i_7589];
@@ -154,36 +189,11 @@ function sincronizarDadosEntreTabelas_7891() {
 
                 const id_transacao_7582 = transacaoRow_1587[colunas_1495['Transações com Saldo']['ID']];
 
-                function normalizarHora(parametro) {
-                    let data;
 
-                    if (typeof parametro === 'string') {
-                        data = new Date(parametro);
-
-                        if (isNaN(data.getTime())) {
-                            const partes = parametro.match(/(\d{2}):(\d{2}):(\d{2})/);
-                            if (partes) {
-                                return parametro;
-                            } else {
-                                return null;
-                            }
-                        }
-                    } else if (parametro instanceof Date) {
-                        data = parametro;
-                    } else {
-                        return null;
-                    }
-
-                    const hora = data.getHours().toString().padStart(2, '0');
-                    const minuto = data.getMinutes().toString().padStart(2, '0');
-                    const segundo = data.getSeconds().toString().padStart(2, '0');
-                    const horaFormatada = `${hora}:${minuto}:${segundo}`;
-
-                    return horaFormatada;
-                }
-
-                if (String(id_transacao_7582).trim().includes("F") && String(id_transacao_7582).trim() === String(id_fatura_3698).trim()) {
+                if (String(id_transacao_7582).trim() === String(id_fatura_3698).trim()) {
+                    Logger.log(`[DEBUG - ADICIONAR - BUSCA EXATA] Transação ENCONTRADA para fatura ID: ${id_fatura_3698}, ID da Transação Encontrada: ${id_transacao_7582}`); //Adicionado log caso encontre na busca exata
                     transacaoEncontrada_5698 = true;
+                    transacaoLinha_8567 = transacaoRow_1587;
                     const atualizacoes_3579 = {};
                     let precisaAtualizar_1579 = false;
                     const linhaTemporaria_4587 = [...transacaoRow_1587];
@@ -282,26 +292,12 @@ function sincronizarDadosEntreTabelas_7891() {
                                 const colIndex_8532 = parseInt(key_9516.replace("coluna", "")) - 1;
                                 linhaTemporaria_4587[colIndex_8532] = atualizacoes_3579[key_9516];
                             }
-
-                            linhas_para_atualizar_7485.push({
-                                index: i_7589+1,
-                                values: linhaTemporaria_4587,
-                            });
-                            Logger.log(`[ATUALIZAR] - Linha: ${i_7589 + 1}, Dados: ${JSON.stringify(linhaTemporaria_4587)}`);
-
-                            const dataVencimentoFormatada_2365 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
-                            const dataHojeFormatada_3587 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
-                            const dataFechamentoformatada_9875 = Utilities.formatDate(fechamentoFatura_9871, "GMT-3", "dd/MM/yyyy");
-                            const descricaoEvento_7591 = `Fatura referente a ${mesAnoReferencia_2684}, com fechamento em ${dataFechamentoformatada_9875}`;
-                            const tituloEvento_6598 = `Pagamento de Fatura em ${nomeCartao_6359}`;
-
-                            if (dataVencimentoFormatada_2365 !== Utilities.formatDate(transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']], "GMT-3", "dd/MM/yyyy")) {
-
-                                if (dataVencimentoFormatada_2365 === dataHojeFormatada_3587) {
-                                    criarouatualizareventodehoje_9876(dataVencimentoFormatada_2365, id_fatura_3698, descricaoEvento_7591, tituloEvento_6598, "14:00");
-                                } else {
-                                    criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_2365, id_fatura_3698, descricaoEvento_7591, tituloEvento_6598, "14:00");
-                                }
+                            if (indiceManter_8234 > -1) {
+                                linhas_para_atualizar_7485.push({
+                                    index: indiceManter_8234 + 2,
+                                    values: linhaTemporaria_4587,
+                                });
+                                Logger.log(`[ATUALIZAR] - Linha: ${indiceManter_8234 + 2}, Dados: ${JSON.stringify(linhaTemporaria_4587)}`);
                             }
                         }
                     }
@@ -310,6 +306,9 @@ function sincronizarDadosEntreTabelas_7891() {
             }
 
             if (!transacaoEncontrada_5698 && valorFatura_3571 >= 0.01) {
+                Logger.log(`[DEBUG - ADICIONAR] ***INSERINDO NOVA TRANSAÇÃO***`); //Adicionado log de inserção
+                Logger.log(`[DEBUG - ADICIONAR] ID da Fatura: ${id_fatura_3698}`); //Adicionado log de inserção
+                Logger.log(`[DEBUG - ADICIONAR] Valor da Fatura: ${valorFatura_3571}`); //Adicionado log de inserção
                 const novaLinha_5896 = [];
                 novaLinha_5896[0] = String(id_fatura_3698).trim();
                 novaLinha_5896[1] = formaPagamento_2469 === "Débito Automático" ? "Pagamento - Débito Automático" : formaPagamento_2469 === "Boleto Bancário" ? "Pagamento - Boleto" : "Pagamento - Outros Tipos";
@@ -339,7 +338,6 @@ function sincronizarDadosEntreTabelas_7891() {
                 novaLinha_5896[31] = ultimaFatura_4279;
 
                 linhas_para_inserir_6392.push(novaLinha_5896);
-                Logger.log(`[ADICIONAR] Lote: ${idDoLote_9123} - ID da Fatura: ${id_fatura_3698}, Dados: ${JSON.stringify(novaLinha_5896)}`);
 
                 const dataVencimentoFormatada_9874 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
                 const dataHojeFormatada_6541 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
@@ -360,7 +358,7 @@ function sincronizarDadosEntreTabelas_7891() {
             }
         });
 
-        for (let i_7536 = 0; i_7536 < transacoesData_3185.length ; i_7536++) {
+        for (let i_7536 = 0; i_7536 < transacoesData_3185.length; i_7536++) {
             const transacaoRow_6259 = transacoesData_3185[i_7536];
 
             if (!transacaoRow_6259) {
@@ -369,13 +367,11 @@ function sincronizarDadosEntreTabelas_7891() {
 
             const id_transacao_5896 = transacaoRow_6259[colunas_1495['Transações com Saldo']['ID']];
             const status_9531 = transacaoRow_6259[colunas_1495['Transações com Saldo']['Status']];
-
             const idFaturaTransacao_4567 = String(id_transacao_5896).trim();
 
             Logger.log(`[DEBUG] ID da Transação: ${idFaturaTransacao_4567}`);
             Logger.log(`[DEBUG] IDs de Faturas: ${JSON.stringify(faturasIds_1597)}`);
             Logger.log(`[DEBUG] IDs para remover: ${JSON.stringify(Array.from(ids_para_remover_3156))}`);
-
 
             if (idFaturaTransacao_4567.includes("F")) {
                 if (ids_para_remover_3156.has(idFaturaTransacao_4567) || !faturasIds_1597.includes(idFaturaTransacao_4567)) {
@@ -389,8 +385,8 @@ function sincronizarDadosEntreTabelas_7891() {
                         } else {
                             motivoExclusao_7485 = "Motivo desconhecido";
                         }
-                        Logger.log(`[EXCLUIR] Lote: ${idDoLote_9123} - Linha: ${i_7536 + 1}, ID da Fatura: ${idFaturaTransacao_4567}, Motivo: ${motivoExclusao_7485}`);
-                        linhas_para_excluir_2148.push(i_7536 + 1);
+                        Logger.log(`[EXCLUIR] Lote: ${idDoLote_9123} - Linha: ${i_7536 + 2}, ID da Fatura: ${idFaturaTransacao_4567}, Motivo: ${motivoExclusao_7485}`);
+                        linhas_para_excluir_2148.push(i_7536 + 2);
                     }
                 }
             }
@@ -443,5 +439,32 @@ function sincronizarDadosEntreTabelas_7891() {
 
     function pad_7384(num) {
         return num.toString().padStart(2, '0');
+    }
+    function normalizarHora(parametro) {
+        let data;
+
+        if (typeof parametro === 'string') {
+            data = new Date(parametro);
+
+            if (isNaN(data.getTime())) {
+                const partes = parametro.match(/(\d{2}):(\d{2}):(\d{2})/);
+                if (partes) {
+                    return parametro;
+                } else {
+                    return null;
+                }
+            }
+        } else if (parametro instanceof Date) {
+            data = parametro;
+        } else {
+            return null;
+        }
+
+        const hora = data.getHours().toString().padStart(2, '0');
+        const minuto = data.getMinutes().toString().padStart(2, '0');
+        const segundo = data.getSeconds().toString().padStart(2, '0');
+        const horaFormatada = `${hora}:${minuto}:${segundo}`;
+
+        return horaFormatada;
     }
 }
