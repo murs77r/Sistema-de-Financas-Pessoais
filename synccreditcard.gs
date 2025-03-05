@@ -14,10 +14,10 @@ function sincronizarDadosEntreTabelas_7891() {
 
     const colunas_1495 = {
         'Faturas de Cartões de Crédito': {
-            'ID': 0, 'Nome do Cartão de Crédito': 1, 'Instituição Financeira': 2, 'Pagamento': 3, 'Correção': 4,
-            'Abertura': 5, 'Fechamento': 6, 'Vencimento': 7, 'Mês de Referência': 8,
-            'Ano de Referência': 9, 'Mês/Ano de Referência': 10, 'Valor da Fatura': 11,
-            'Arquivo da Fatura': 12, 'Registro de Atualização': 13, 'Última Atualização': 14
+            'ID': 0, 'Nome do Cartão de Crédito': 1, 'Instituição Financeira': 2, 'Pagamento': 3,
+            'Abertura': 4, 'Fechamento': 5, 'Vencimento': 6, 'Mês de Referência': 7,
+            'Ano de Referência': 8, 'Mês/Ano de Referência': 9, 'Valor da Fatura': 10,
+            'Arquivo da Fatura': 11, 'Registro de Atualização': 12, 'Última Atualização': 13
         },
         'Transações com Saldo': {
             'ID': 0, 'Procedimento': 1, 'Operação': 2, 'Descrição': 3, 'Categoria - Crédito': 4,
@@ -51,319 +51,347 @@ function sincronizarDadosEntreTabelas_7891() {
     const horariodeagora_7531 = Utilities.formatDate(new Date(), "GMT-3", "HH:mm:ss");
     const transacoesSheet_9571 = sheets_5721['Transações com Saldo'];
     const faturasSheet_1598 = sheets_5721['Faturas de Cartões de Crédito'];
-    const transacoesData_3185 = transacoesSheet_9571.getDataRange().getValues();
-    const faturasData_7532 = faturasSheet_1598.getDataRange().getValues();
     const today_6548 = new Date();
     today_6548.setHours(0, 0, 0, 0);
 
-    const faturasFiltradas_3597 = faturasData_7532.filter((row, index) => {
+    const numRowsFaturas_1234 = faturasSheet_1598.getDataRange().getValues().length - 1;
+    const batchSize_3947 = Math.max(25, Math.min(250, Math.round(numRowsFaturas_1234 * 0.15)));
+
+    let linhas_para_atualizar_7485 = [];
+    let linhas_para_inserir_6392 = [];
+    let linhas_para_excluir_2148 = [];
+
+    const numRowsTransacoes_9876 = transacoesSheet_9571.getDataRange().getValues().length - 1;
+    const batchSizeTransacoes_8765 = Math.max(25, Math.min(250, Math.round(numRowsTransacoes_9876 * 0.15)));
+    let transacoesData_3185 = [];
+
+    for (let i_1111 = 1; i_1111 <= numRowsTransacoes_9876; i_1111 += batchSizeTransacoes_8765) {
+        const startRowTransacoes_2222 = i_1111;
+        const endRowTransacoes_3333 = Math.min(i_1111 + batchSizeTransacoes_8765 - 1, numRowsTransacoes_9876);
+        const numRowsInBatchTransacoes_4444 = endRowTransacoes_3333 - startRowTransacoes_2222 + 1;
+        const rangeTransacoes_5555 = transacoesSheet_9571.getRange(startRowTransacoes_2222 + 1, 1, numRowsInBatchTransacoes_4444, transacoesSheet_9571.getLastColumn());
+        const transacoesBatch_6666 = rangeTransacoes_5555.getValues();
+
+        transacoesData_3185 = transacoesData_3185.concat(transacoesBatch_6666);
+    }
+
+    const ids_para_remover_3156 = new Set();
+    const faturasDataCompleta_7777 = faturasSheet_1598.getDataRange().getValues();
+    const faturasFiltradas_3597 = faturasDataCompleta_7777.filter((row, index) => {
         if (index === 0) {
             return true;
         }
-
         const vencimento_2468 = row[colunas_1495['Faturas de Cartões de Crédito']['Vencimento']];
         return vencimento_2468 >= today_6548;
     });
 
-    const transacoesFiltradas_2369 = transacoesData_3185.filter((row, index) => {
-        if (index === 0) {
-            return true;
-        }
-
-        const status_5874 = row[colunas_1495['Transações com Saldo']['Status']];
-        const id_4512 = row[colunas_1495['Transações com Saldo']['ID']];
-        return status_5874 !== "Efetuado" || id_4512.includes("F");
-    });
-
-    const ids_para_remover_3156 = new Set();
-    const linhas_para_atualizar_7485 = [];
-    const linhas_para_inserir_6392 = [];
-    const linhas_para_excluir_2148 = [];
-
-    faturasFiltradas_3597.forEach((faturaRow, index) => {
+     faturasFiltradas_3597.forEach((faturaRow, index) => {
         if (index === 0) {
             return;
         }
-
         const valor_2589 = parseFloat(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura']]);
         const id_fatura_1478 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['ID']];
 
         if (valor_2589 < 0.01) {
-            ids_para_remover_3156.add(id_fatura_1478);
+            ids_para_remover_3156.add(String(id_fatura_1478).trim());
         }
     });
 
-    const idsComF_9513 = new Set();
-    const linhasParaRemover_2649 = new Set();
+    const faturasIds_1597 = faturasFiltradas_3597.map(row => String(row[colunas_1495['Faturas de Cartões de Crédito']['ID']]).trim());
 
-    for (let i_4785 = transacoesFiltradas_2369.length - 1; i_4785 > 0; i_4785--) {
-        const row_6542 = transacoesFiltradas_2369[i_4785];
-        const id_4258 = row_6542[colunas_1495['Transações com Saldo']['ID']];
 
-        if (id_4258.includes("F")) {
-            if (idsComF_9513.has(id_4258)) {
-                linhasParaRemover_2649.add(i_4785);
-            } else {
-                idsComF_9513.add(id_4258);
+    for (let i_6294 = 1; i_6294 <= numRowsFaturas_1234; i_6294 += batchSize_3947) {
+        const startRow_1835 = i_6294;
+        const endRow_7392 = Math.min(i_6294 + batchSize_3947 - 1, numRowsFaturas_1234);
+        const numRowsInBatch_4729 = endRow_7392 - startRow_1835 + 1;
+        const range_5287 = faturasSheet_1598.getRange(startRow_1835 + 1, 1, numRowsInBatch_4729, colunas_1495['Faturas de Cartões de Crédito']['Última Atualização'] + 1);
+        const faturasData_5183 = range_5287.getValues();
+        const idDoLote_9123 = i_6294;
+
+        faturasData_5183.forEach((faturaRow, index) => {
+            if (index === 0) {
+                return;
             }
-        }
-    }
 
-    linhasParaRemover_2649.forEach(index => {
-        transacoesFiltradas_2369.splice(index, 1);
-    });
+            const id_fatura_3698 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['ID']];
+            const nomeCartao_6359 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Nome do Cartão de Crédito']];
+            const instituicaoFinanceira_1578 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Instituição Financeira']];
+            const formaPagamento_2469 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Pagamento']];
+            const fechamentoFatura_9871 = converterParaData_4259(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Fechamento']]);
+            const vencimentoFatura_7412 = converterParaData_4259(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Vencimento']]);
 
-    const faturasIds_1597 = faturasFiltradas_3597.map(row => row[colunas_1495['Faturas de Cartões de Crédito']['ID']]);
-
-    faturasFiltradas_3597.forEach((faturaRow, index) => {
-        if (index === 0) {
-            return;
-        }
-
-        const id_fatura_3698 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['ID']];
-        const nomeCartao_6359 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Nome do Cartão de Crédito']];
-        const instituicaoFinanceira_1578 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Instituição Financeira']];
-        const formaPagamento_2469 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Pagamento']];
-        const fechamentoFatura_9871 = converterParaData_4259(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Fechamento']]);
-        const vencimentoFatura_7412 = converterParaData_4259(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Vencimento']]);
-
-        function converterParaData_4259(valor) {
-            if (typeof valor === 'string') {
-                if (valor.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-                    const partes_3652 = valor.split('/');
-                    return new Date(partes_3652[2], partes_3652[1] - 1, partes_3652[0]);
-                } else {
-                    return new Date(valor);
-                }
-            } else if (valor instanceof Date) {
-                return valor;
-            } else {
-                return null;
-            }
-        }
-
-        const mesReferencia_5931 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Mês de Referência']];
-        const anoReferencia_7593 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Ano de Referência']];
-        const mesAnoReferencia_2684 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Mês/Ano de Referência']];
-        const valorFatura_3571 = parseFloat(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura']]);
-        const arquivoFatura_5271 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Arquivo da Fatura']];
-        const registroFatura_6893 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Registro de Atualização']];
-        const ultimaFatura_4279 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Última Atualização']];
-
-        let transacaoEncontrada_5698 = false;
-
-        for (let i_7589 = 1; i_7589 < transacoesFiltradas_2369.length; i_7589++) {
-            const transacaoRow_1587 = transacoesFiltradas_2369[i_7589];
-            const id_transacao_7582 = transacaoRow_1587[colunas_1495['Transações com Saldo']['ID']];
-
-            function normalizarHora(parametro) {
-                let data;
-
-                if (typeof parametro === 'string') {
-                    data = new Date(parametro);
-
-                    if (isNaN(data.getTime())) {
-                        const partes = parametro.match(/(\d{2}):(\d{2}):(\d{2})/);
-                        if (partes) {
-                            return parametro;
-                        } else {
-                            return null;
-                        }
+            function converterParaData_4259(valor) {
+                if (typeof valor === 'string') {
+                    if (valor.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                        const partes_3652 = valor.split('/');
+                        return new Date(partes_3652[2], partes_3652[1] - 1, partes_3652[0]);
+                    } else {
+                        return new Date(valor);
                     }
-                } else if (parametro instanceof Date) {
-                    data = parametro;
+                } else if (valor instanceof Date) {
+                    return valor;
                 } else {
                     return null;
                 }
-
-                const hora = data.getHours().toString().padStart(2, '0');
-                const minuto = data.getMinutes().toString().padStart(2, '0');
-                const segundo = data.getSeconds().toString().padStart(2, '0');
-                const horaFormatada = `${hora}:${minuto}:${segundo}`;
-
-                return horaFormatada;
             }
 
-            if (id_transacao_7582.includes("F") && id_transacao_7582 === id_fatura_3698) {
-                transacaoEncontrada_5698 = true;
-                const atualizacoes_3579 = {};
-                let precisaAtualizar_1579 = false;
-                const linhaTemporaria_4587 = [...transacaoRow_1587];
+            const mesReferencia_5931 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Mês de Referência']];
+            const anoReferencia_7593 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Ano de Referência']];
+            const mesAnoReferencia_2684 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Mês/Ano de Referência']];
+            const valorFatura_3571 = parseFloat(faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura']]);
+            const arquivoFatura_5271 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Arquivo da Fatura']];
+            const registroFatura_6893 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Registro de Atualização']];
+            const ultimaFatura_4279 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Última Atualização']];
 
-                if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Status']] === "Pendente") {
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Descrição']] !== `Fatura (${nomeCartao_6359})`) {
-                        atualizacoes_3579.coluna4 = `Fatura (${nomeCartao_6359})`;
-                        precisaAtualizar_1579 = true;
+            let transacaoEncontrada_5698 = false;
+
+            for (let i_7589 = 0; i_7589 < transacoesData_3185.length; i_7589++) {
+                const transacaoRow_1587 = transacoesData_3185[i_7589];
+
+                if (!transacaoRow_1587) {
+                    continue;
+                }
+
+                const id_transacao_7582 = transacaoRow_1587[colunas_1495['Transações com Saldo']['ID']];
+
+                function normalizarHora(parametro) {
+                    let data;
+
+                    if (typeof parametro === 'string') {
+                        data = new Date(parametro);
+
+                        if (isNaN(data.getTime())) {
+                            const partes = parametro.match(/(\d{2}):(\d{2}):(\d{2})/);
+                            if (partes) {
+                                return parametro;
+                            } else {
+                                return null;
+                            }
+                        }
+                    } else if (parametro instanceof Date) {
+                        data = parametro;
+                    } else {
+                        return null;
                     }
 
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Status']] !== "Pendente") {
-                        atualizacoes_3579.coluna7 = "Pendente";
-                        precisaAtualizar_1579 = true;
-                    }
+                    const hora = data.getHours().toString().padStart(2, '0');
+                    const minuto = data.getMinutes().toString().padStart(2, '0');
+                    const segundo = data.getSeconds().toString().padStart(2, '0');
+                    const horaFormatada = `${hora}:${minuto}:${segundo}`;
 
-                    if (
-                        transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']].getDate() !== vencimentoFatura_7412.getDate() ||
-                        transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']].getMonth() !== vencimentoFatura_7412.getMonth() ||
-                        transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']].getFullYear() !== vencimentoFatura_7412.getFullYear()
-                    ) {
-                        atualizacoes_3579.coluna12 = vencimentoFatura_7412;
-                        precisaAtualizar_1579 = true;
-                    }
+                    return horaFormatada;
+                }
 
-                    if (normalizarHora(transacaoRow_1587[colunas_1495['Transações com Saldo']['Horário Programado']]) !== (formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00")) {
-                        atualizacoes_3579.coluna13 = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
-                        precisaAtualizar_1579 = true;
-                    }
+                if (String(id_transacao_7582).trim().includes("F") && String(id_transacao_7582).trim() === String(id_fatura_3698).trim()) {
+                    transacaoEncontrada_5698 = true;
+                    const atualizacoes_3579 = {};
+                    let precisaAtualizar_1579 = false;
+                    const linhaTemporaria_4587 = [...transacaoRow_1587];
 
-                    if (
-                        transacaoRow_1587[colunas_1495['Transações com Saldo']['Data de Efetivação']].getDate() !== vencimentoFatura_7412.getDate() ||
-                        transacaoRow_1587[colunas_1495['Transações com Saldo']['Data de Efetivação']].getMonth() !== vencimentoFatura_7412.getMonth() ||
-                        transacaoRow_1587[colunas_1495['Transações com Saldo']['Data de Efetivação']].getFullYear() !== vencimentoFatura_7412.getFullYear()
-                    ) {
-                        atualizacoes_3579.coluna14 = vencimentoFatura_7412;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (normalizarHora(transacaoRow_1587[colunas_1495['Transações com Saldo']['Horário da Efetivação']]) !== (formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00")) {
-                        atualizacoes_3579.coluna15 = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Mês da Transação']] !== mesReferencia_5931) {
-                        atualizacoes_3579.coluna16 = mesReferencia_5931;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Ano da Transação']] !== anoReferencia_7593) {
-                        atualizacoes_3579.coluna17 = anoReferencia_7593;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Valor Base']]) !== parseFloat(valorFatura_3571)) {
-                        atualizacoes_3579.coluna22 = valorFatura_3571;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Taxas ou Impostos']]) !== parseFloat(0.00)) {
-                        atualizacoes_3579.coluna23 = 0.00;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Sub-Total']]) !== parseFloat(valorFatura_3571)) {
-                        atualizacoes_3579.coluna24 = valorFatura_3571;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Total Efetivo']]) !== parseFloat(-valorFatura_3571)) {
-                        atualizacoes_3579.coluna25 = -valorFatura_3571;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Termos do Serviço']] !== arquivoFatura_5271) {
-                        atualizacoes_3579.coluna26 = arquivoFatura_5271;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Relevante para Imposto de Renda']] !== "Não") {
-                        atualizacoes_3579.coluna30 = "Não";
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Registro de Atualização']] !== registroFatura_6893) {
-                        atualizacoes_3579.coluna31 = registroFatura_6893;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Última Atualização']] !== ultimaFatura_4279) {
-                        atualizacoes_3579.coluna32 = ultimaFatura_4279;
-                        precisaAtualizar_1579 = true;
-                    }
-
-                    if (precisaAtualizar_1579) {
-                        for (const key_9516 in atualizacoes_3579) {
-                            const colIndex_8532 = parseInt(key_9516.replace("coluna", "")) - 1;
-                            linhaTemporaria_4587[colIndex_8532] = atualizacoes_3579[key_9516];
+                    if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Status']] === "Pendente") {
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Descrição']] !== `Fatura (${nomeCartao_6359})`) {
+                            atualizacoes_3579.coluna4 = `Fatura (${nomeCartao_6359})`;
+                            precisaAtualizar_1579 = true;
                         }
 
-                        linhas_para_atualizar_7485.push({
-                            index: transacoesData_3185.findIndex((row) => row[colunas_1495['Transações com Saldo']['ID']] === id_transacao_7582) + 1,
-                            values: linhaTemporaria_4587,
-                        });
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Status']] !== "Pendente") {
+                            atualizacoes_3579.coluna7 = "Pendente";
+                            precisaAtualizar_1579 = true;
+                        }
 
-                        const dataVencimentoFormatada_2365 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
-                        const dataHojeFormatada_3587 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
-                        const dataFechamentoformatada_9875 = Utilities.formatDate(fechamentoFatura_9871, "GMT-3", "dd/MM/yyyy");
-                        const descricaoEvento_7591 = `Fatura referente a ${mesAnoReferencia_2684}, com fechamento em ${dataFechamentoformatada_9875}`;
-                        const tituloEvento_6598 = `Pagamento de Fatura em ${nomeCartao_6359}`;
+                        if (
+                            transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']].getDate() !== vencimentoFatura_7412.getDate() ||
+                            transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']].getMonth() !== vencimentoFatura_7412.getMonth() ||
+                            transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']].getFullYear() !== vencimentoFatura_7412.getFullYear()
+                        ) {
+                            atualizacoes_3579.coluna12 = vencimentoFatura_7412;
+                            precisaAtualizar_1579 = true;
+                        }
 
-                        if (dataVencimentoFormatada_2365 !== Utilities.formatDate(transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']], "GMT-3", "dd/MM/yyyy")) {
+                        if (normalizarHora(transacaoRow_1587[colunas_1495['Transações com Saldo']['Horário Programado']]) !== (formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00")) {
+                            atualizacoes_3579.coluna13 = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
+                            precisaAtualizar_1579 = true;
+                        }
 
-                            if (dataVencimentoFormatada_2365 === dataHojeFormatada_3587) {
-                                criarouatualizareventodehoje_9876(dataVencimentoFormatada_2365, id_fatura_3698, descricaoEvento_7591, tituloEvento_6598, "14:00");
-                            } else {
-                                criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_2365, id_fatura_3698, descricaoEvento_7591, tituloEvento_6598, "14:00");
+                        if (
+                            transacaoRow_1587[colunas_1495['Transações com Saldo']['Data de Efetivação']].getDate() !== vencimentoFatura_7412.getDate() ||
+                            transacaoRow_1587[colunas_1495['Transações com Saldo']['Data de Efetivação']].getMonth() !== vencimentoFatura_7412.getMonth() ||
+                            transacaoRow_1587[colunas_1495['Transações com Saldo']['Data de Efetivação']].getFullYear() !== vencimentoFatura_7412.getFullYear()
+                        ) {
+                            atualizacoes_3579.coluna14 = vencimentoFatura_7412;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (normalizarHora(transacaoRow_1587[colunas_1495['Transações com Saldo']['Horário da Efetivação']]) !== (formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00")) {
+                            atualizacoes_3579.coluna15 = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Mês da Transação']] !== mesReferencia_5931) {
+                            atualizacoes_3579.coluna16 = mesReferencia_5931;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Ano da Transação']] !== anoReferencia_7593) {
+                            atualizacoes_3579.coluna17 = anoReferencia_7593;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Valor Base']]) !== parseFloat(valorFatura_3571)) {
+                            atualizacoes_3579.coluna22 = valorFatura_3571;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Taxas ou Impostos']]) !== parseFloat(0.00)) {
+                            atualizacoes_3579.coluna23 = 0.00;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Sub-Total']]) !== parseFloat(valorFatura_3571)) {
+                            atualizacoes_3579.coluna24 = valorFatura_3571;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (parseFloat(transacaoRow_1587[colunas_1495['Transações com Saldo']['Total Efetivo']]) !== parseFloat(-valorFatura_3571)) {
+                            atualizacoes_3579.coluna25 = -valorFatura_3571;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Termos do Serviço']] !== arquivoFatura_5271) {
+                            atualizacoes_3579.coluna26 = arquivoFatura_5271;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Relevante para Imposto de Renda']] !== "Não") {
+                            atualizacoes_3579.coluna30 = "Não";
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Registro de Atualização']] !== registroFatura_6893) {
+                            atualizacoes_3579.coluna31 = registroFatura_6893;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (transacaoRow_1587[colunas_1495['Transações com Saldo']['Última Atualização']] !== ultimaFatura_4279) {
+                            atualizacoes_3579.coluna32 = ultimaFatura_4279;
+                            precisaAtualizar_1579 = true;
+                        }
+
+                        if (precisaAtualizar_1579) {
+                            for (const key_9516 in atualizacoes_3579) {
+                                const colIndex_8532 = parseInt(key_9516.replace("coluna", "")) - 1;
+                                linhaTemporaria_4587[colIndex_8532] = atualizacoes_3579[key_9516];
+                            }
+
+                            linhas_para_atualizar_7485.push({
+                                index: i_7589+1,
+                                values: linhaTemporaria_4587,
+                            });
+                            Logger.log(`[ATUALIZAR] - Linha: ${i_7589 + 1}, Dados: ${JSON.stringify(linhaTemporaria_4587)}`);
+
+                            const dataVencimentoFormatada_2365 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
+                            const dataHojeFormatada_3587 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
+                            const dataFechamentoformatada_9875 = Utilities.formatDate(fechamentoFatura_9871, "GMT-3", "dd/MM/yyyy");
+                            const descricaoEvento_7591 = `Fatura referente a ${mesAnoReferencia_2684}, com fechamento em ${dataFechamentoformatada_9875}`;
+                            const tituloEvento_6598 = `Pagamento de Fatura em ${nomeCartao_6359}`;
+
+                            if (dataVencimentoFormatada_2365 !== Utilities.formatDate(transacaoRow_1587[colunas_1495['Transações com Saldo']['Data Programada']], "GMT-3", "dd/MM/yyyy")) {
+
+                                if (dataVencimentoFormatada_2365 === dataHojeFormatada_3587) {
+                                    criarouatualizareventodehoje_9876(dataVencimentoFormatada_2365, id_fatura_3698, descricaoEvento_7591, tituloEvento_6598, "14:00");
+                                } else {
+                                    criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_2365, id_fatura_3698, descricaoEvento_7591, tituloEvento_6598, "14:00");
+                                }
                             }
                         }
                     }
+                    break;
                 }
-                break;
             }
-        }
 
-        if (!transacaoEncontrada_5698 && valorFatura_3571 >= 0.01) {
-            const novaLinha_5896 = [];
-            novaLinha_5896[0] = id_fatura_3698;
-            novaLinha_5896[1] = formaPagamento_2469 === "Débito Automático" ? "Pagamento - Débito Automático" : formaPagamento_2469 === "Boleto Bancário" ? "Pagamento - Boleto" : "Pagamento - Outros Tipos";
-            novaLinha_5896[2] = "Débito";
-            novaLinha_5896[3] = `Fatura (${nomeCartao_6359})`;
-            novaLinha_5896[5] = "Despesa - Pagamento de Fatura";
-            novaLinha_5896[6] = "Pendente";
-            novaLinha_5896[7] = "Murilo Souza Ramos";
-            novaLinha_5896[8] = datadehoje_8642;
-            novaLinha_5896[9] = horariodeagora_7531;
-            novaLinha_5896[10] = "Sim";
-            novaLinha_5896[11] = vencimentoFatura_7412;
-            novaLinha_5896[12] = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
-            novaLinha_5896[13] = vencimentoFatura_7412;
-            novaLinha_5896[14] = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
-            novaLinha_5896[15] = mesReferencia_5931;
-            novaLinha_5896[16] = anoReferencia_7593;
-            novaLinha_5896[17] = instituicaoFinanceira_1578;
-            novaLinha_5896[18] = "Movimentação";
-            novaLinha_5896[21] = valorFatura_3571;
-            novaLinha_5896[22] = 0.00;
-            novaLinha_5896[23] = valorFatura_3571;
-            novaLinha_5896[24] = -valorFatura_3571;
-            novaLinha_5896[25] = arquivoFatura_5271;
-            novaLinha_5896[29] = "Não";
-            novaLinha_5896[30] = registroFatura_6893;
-            novaLinha_5896[31] = ultimaFatura_4279;
+            if (!transacaoEncontrada_5698 && valorFatura_3571 >= 0.01) {
+                const novaLinha_5896 = [];
+                novaLinha_5896[0] = String(id_fatura_3698).trim();
+                novaLinha_5896[1] = formaPagamento_2469 === "Débito Automático" ? "Pagamento - Débito Automático" : formaPagamento_2469 === "Boleto Bancário" ? "Pagamento - Boleto" : "Pagamento - Outros Tipos";
+                novaLinha_5896[2] = "Débito";
+                novaLinha_5896[3] = `Fatura (${nomeCartao_6359})`;
+                novaLinha_5896[5] = "Despesa - Pagamento de Fatura";
+                novaLinha_5896[6] = "Pendente";
+                novaLinha_5896[7] = "Murilo Souza Ramos";
+                novaLinha_5896[8] = datadehoje_8642;
+                novaLinha_5896[9] = horariodeagora_7531;
+                novaLinha_5896[10] = "Sim";
+                novaLinha_5896[11] = vencimentoFatura_7412;
+                novaLinha_5896[12] = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
+                novaLinha_5896[13] = vencimentoFatura_7412;
+                novaLinha_5896[14] = formaPagamento_2469 === "Débito Automático" ? "04:00:00" : "14:00:00";
+                novaLinha_5896[15] = mesReferencia_5931;
+                novaLinha_5896[16] = anoReferencia_7593;
+                novaLinha_5896[17] = instituicaoFinanceira_1578;
+                novaLinha_5896[18] = "Movimentação";
+                novaLinha_5896[21] = valorFatura_3571;
+                novaLinha_5896[22] = 0.00;
+                novaLinha_5896[23] = valorFatura_3571;
+                novaLinha_5896[24] = -valorFatura_3571;
+                novaLinha_5896[25] = arquivoFatura_5271;
+                novaLinha_5896[29] = "Não";
+                novaLinha_5896[30] = registroFatura_6893;
+                novaLinha_5896[31] = ultimaFatura_4279;
 
-            linhas_para_inserir_6392.push(novaLinha_5896);
+                linhas_para_inserir_6392.push(novaLinha_5896);
+                Logger.log(`[ADICIONAR] Lote: ${idDoLote_9123} - ID da Fatura: ${id_fatura_3698}, Dados: ${JSON.stringify(novaLinha_5896)}`);
 
-            const dataVencimentoFormatada_9874 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
-            const dataHojeFormatada_6541 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
-            const dataFechamentoformatada_3578 = Utilities.formatDate(fechamentoFatura_9871, "GMT-3", "dd/MM/yyyy");
-            const descricaoEvento_2589 = `Fatura referente a ${mesAnoReferencia_2684}, com fechamento em ${dataFechamentoformatada_3578}`;
-            const tituloEvento_8593 = `Pagamento de Fatura em ${nomeCartao_6359}`;
+                const dataVencimentoFormatada_9874 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
+                const dataHojeFormatada_6541 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
+                const dataFechamentoformatada_3578 = Utilities.formatDate(fechamentoFatura_9871, "GMT-3", "dd/MM/yyyy");
+                const descricaoEvento_2589 = `Fatura referente a ${mesAnoReferencia_2684}, com fechamento em ${dataFechamentoformatada_3578}`;
+                const tituloEvento_8593 = `Pagamento de Fatura em ${nomeCartao_6359}`;
 
-            if (dataVencimentoFormatada_9874 === dataHojeFormatada_6541) {
-                criarouatualizareventodehoje_9876(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593, "14:00");
-            } else {
-                criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593, "14:00");
+                if (dataVencimentoFormatada_9874 === dataHojeFormatada_6541) {
+                    criarouatualizareventodehoje_9876(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593, "14:00");
+                } else {
+                    criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593, "14:00");
+                }
             }
-        }
-    });
 
-    for (let i_7536 = transacoesFiltradas_2369.length - 1; i_7536 > 0; i_7536--) {
-        const transacaoRow_6259 = transacoesFiltradas_2369[i_7536];
-        const id_transacao_5896 = transacaoRow_6259[colunas_1495['Transações com Saldo']['ID']];
-        const status_9531 = transacaoRow_6259[colunas_1495['Transações com Saldo']['Status']];
+            if (faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Arquivo da Fatura']]) {
+                const valorFatura_6294 = faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura']];
+                faturasSheet_1598.getRange(startRow_1835 + index + 1, colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura'] + 1).setValue(valorFatura_6294);
+            }
+        });
 
-        if (id_transacao_5896.includes("F")) {
-            if (ids_para_remover_3156.has(id_transacao_5896) || !faturasIds_1597.includes(id_transacao_5896)) {
-                if (status_9531 !== "Efetuado") {
-                    linhas_para_excluir_2148.push(transacoesData_3185.findIndex(row => row[colunas_1495['Transações com Saldo']['ID']] === id_transacao_5896) + 1);
+        for (let i_7536 = 0; i_7536 < transacoesData_3185.length ; i_7536++) {
+            const transacaoRow_6259 = transacoesData_3185[i_7536];
+
+            if (!transacaoRow_6259) {
+                continue;
+            }
+
+            const id_transacao_5896 = transacaoRow_6259[colunas_1495['Transações com Saldo']['ID']];
+            const status_9531 = transacaoRow_6259[colunas_1495['Transações com Saldo']['Status']];
+
+            const idFaturaTransacao_4567 = String(id_transacao_5896).trim();
+
+            Logger.log(`[DEBUG] ID da Transação: ${idFaturaTransacao_4567}`);
+            Logger.log(`[DEBUG] IDs de Faturas: ${JSON.stringify(faturasIds_1597)}`);
+            Logger.log(`[DEBUG] IDs para remover: ${JSON.stringify(Array.from(ids_para_remover_3156))}`);
+
+
+            if (idFaturaTransacao_4567.includes("F")) {
+                if (ids_para_remover_3156.has(idFaturaTransacao_4567) || !faturasIds_1597.includes(idFaturaTransacao_4567)) {
+                    if (status_9531 !== "Efetuado") {
+                        let motivoExclusao_7485 = "";
+
+                        if (ids_para_remover_3156.has(idFaturaTransacao_4567)) {
+                            motivoExclusao_7485 = "Valor da fatura menor que 0.01. Status: " + status_9531;
+                        } else if (!faturasIds_1597.includes(idFaturaTransacao_4567)) {
+                            motivoExclusao_7485 = "Fatura não encontrada na planilha de faturas. Status: " + status_9531;
+                        } else {
+                            motivoExclusao_7485 = "Motivo desconhecido";
+                        }
+                        Logger.log(`[EXCLUIR] Lote: ${idDoLote_9123} - Linha: ${i_7536 + 1}, ID da Fatura: ${idFaturaTransacao_4567}, Motivo: ${motivoExclusao_7485}`);
+                        linhas_para_excluir_2148.push(i_7536 + 1);
+                    }
                 }
             }
         }
@@ -377,12 +405,10 @@ function sincronizarDadosEntreTabelas_7891() {
 
     if (linhas_para_inserir_6392.length > 0) {
         const lastRow_5397 = transacoesSheet_9571.getLastRow();
+        transacoesSheet_9571.insertRowsAfter(lastRow_5397, linhas_para_inserir_6392.length);
+        const range_3591 = transacoesSheet_9571.getRange(lastRow_5397 + 1, 1, linhas_para_inserir_6392.length, linhas_para_inserir_6392[0].length);
+        range_3591.setValues(linhas_para_inserir_6392);
 
-        if (linhas_para_inserir_6392.length > 0) {
-            transacoesSheet_9571.insertRowsAfter(lastRow_5397, linhas_para_inserir_6392.length);
-            const range_3591 = transacoesSheet_9571.getRange(lastRow_5397 + 1, 1, linhas_para_inserir_6392.length, linhas_para_inserir_6392[0].length);
-            range_3591.setValues(linhas_para_inserir_6392);
-        }
     }
 
     if (linhas_para_excluir_2148.length > 0) {
@@ -417,43 +443,5 @@ function sincronizarDadosEntreTabelas_7891() {
 
     function pad_7384(num) {
         return num.toString().padStart(2, '0');
-    }
-
-    processarFaturasEmLote_9253();
-}
-
-function processarFaturasEmLote_9253() {
-    const spreadsheet_7245 = SpreadsheetApp.openById(spreedsheet_id());
-
-    const sheets_5721 = {
-        'Faturas de Cartões de Crédito': spreadsheet_7245.getSheetByName('Faturas de Cartões de Crédito')
-    };
-
-    const colunas_1495 = {
-        'Faturas de Cartões de Crédito': {
-            'ID': 0, 'Nome do Cartão de Crédito': 1, 'Instituição Financeira': 2, 'Pagamento': 3, 'Correção': 4,
-            'Abertura': 5, 'Fechamento': 6, 'Vencimento': 7, 'Mês de Referência': 8,
-            'Ano de Referência': 9, 'Mês/Ano de Referência': 10, 'Valor da Fatura': 11,
-            'Arquivo da Fatura': 12, 'Registro de Atualização': 13, 'Última Atualização': 14
-        }
-    };
-    const faturasSheet_9274 = sheets_5721['Faturas de Cartões de Crédito'];
-    const faturasData_5183 = faturasSheet_9274.getDataRange().getValues();
-    const numRows_8539 = faturasData_5183.length - 1;
-    const batchSize_3947 = Math.max(25, Math.min(250, Math.round(numRows_8539 * 0.15)));
-
-    for (let i_6294 = 1; i_6294 <= numRows_8539; i_6294 += batchSize_3947) {
-        const startRow_1835 = i_6294;
-        const endRow_7392 = Math.min(i_6294 + batchSize_3947 - 1, numRows_8539);
-        const numRowsInBatch_4729 = endRow_7392 - startRow_1835 + 1;
-        const range_5287 = faturasSheet_9274.getRange(startRow_1835 + 1, 1, numRowsInBatch_4729, faturasData_5183[0].length);
-        const values_9461 = range_5287.getValues();
-
-        for (let j_8351 = 0; j_8351 < values_9461.length; j_8351++) {
-            if (values_9461[j_8351][colunas_1495['Faturas de Cartões de Crédito']['Arquivo da Fatura']]) {
-                const valorFatura_6294 = values_9461[j_8351][colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura']];
-                faturasSheet_9274.getRange(startRow_1835 + 1 + j_8351, colunas_1495['Faturas de Cartões de Crédito']['Valor da Fatura'] + 1).setValue(valorFatura_6294);
-            }
-        }
     }
 }
