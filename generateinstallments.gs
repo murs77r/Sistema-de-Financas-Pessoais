@@ -93,7 +93,7 @@ function processarParcelamento_7394(id_2412) {
                     -valorIndividualParcela_6384,
                     valorIndividualParcela_6384,
                     parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito']['Observações']
-                ];
+                    ];
 
                 sheets_5721['Parcelamentos no Cartão de Crédito'].getRange(linha_4733 + 1, 1, 1, updateParcelamento_2847.length).setValues([updateParcelamento_2847]);
                 updatedRows_8462++;
