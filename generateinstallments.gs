@@ -2,24 +2,25 @@ function processarParcelamento_7394(id_2412) {
     const startTime_8254 = new Date();
     const spreadsheetId_9571 = spreedsheet_id();
 
+    const spreadsheet_6248 = SpreadsheetApp.openById(spreadsheetId_9571);
     const sheets_5721 = {
-        'Transacoes': SpreadsheetApp.openById(spreadsheetId_9571).getSheetByName('Transações com Cartão de Crédito'),
-        'Parcelamentos': SpreadsheetApp.openById(spreadsheetId_9571).getSheetByName('Parcelamentos no Cartão de Crédito')
+        'Transações com Cartão de Crédito': spreadsheet_6248.getSheetByName('Transações com Cartão de Crédito'),
+        'Parcelamentos': spreadsheet_6248.getSheetByName('Parcelamentos no Cartão de Crédito')
     };
 
     const colunas_1495 = {
-        'Transacoes': {
-            'ID': 0, 'Procedimento': 1, 'Descricao': 2, 'Categoria': 3, 'Status': 4, 'Operador': 5,
-            'DataRegistro': 6, 'HorarioRegistro': 7, 'Programado': 8, 'DataProgramada': 9,
-            'HorarioProgramado': 10, 'DataEfetivacao': 11, 'HorarioEfetivacao': 12,
-            'LancamentoIndicativo': 13, 'IndicativoMes': 14, 'MesTransacao': 15,
-            'IndicativoAno': 16, 'AnoTransacao': 17, 'Parcelamento': 18,
-            'QuantidadeParcelas': 19, 'Lancamento': 20, 'CartaoCredito': 21,
-            'ValorBase': 22, 'TaxasImpostos': 23, 'SubTotal': 24, 'TotalEfetivo': 25,
-            'ValorIndividualParcela': 26, 'TermosServico': 27, 'DocumentoComprobatorio': 28,
-            'LinkDocumentoFiscal': 29, 'Observacoes': 30,
-            'RelevanteImpostoRenda': 31, 'RegistroAtualizacao': 32,
-            'UltimaAtualizacao': 33, 'IDRecorrencia': 34
+        'Transações com Cartão de Crédito': {
+            'ID': 0, 'Procedimento': 1, 'Descrição': 2, 'Categoria': 3, 'Status': 4, 'Operador': 5,
+            'Data de Registro': 6, 'Horário de Registro': 7, 'Programado': 8, 'Data Programada': 9,
+            'Horário Programado': 10, 'Data de Efetivação': 11, 'Horário da Efetivação': 12,
+            'Lançamento Indicativo': 13, 'Indicativo de Mês': 14, 'Mês da Transação': 15,
+            'Indicativo de Ano': 16, 'Ano da Transação': 17, 'Parcelamento': 18,
+            'Quantidade de Parcelas': 19, 'Lançamento': 20, 'Cartão de Crédito': 21,
+            'Valor Base': 22, 'Taxas ou Impostos': 23, 'Sub-Total': 24, 'Total Efetivo': 25,
+            'Valor Individual/Parcela': 26, 'Termos do Serviço': 27, 'Documento Comprobatório': 28,
+            'Link do Documento Fiscal': 29, 'Observações': 30,
+            'Relevante para Imposto de Renda': 31, 'Registro de Atualização': 32,
+            'Última Atualização': 33, 'ID da Recorrência': 34
         },
         'Parcelamentos': {
             'ID': 0, 'IDTransacao': 1, 'Parcela': 2, 'Lancamento': 3, 'CartaoCredito': 4,
@@ -27,7 +28,7 @@ function processarParcelamento_7394(id_2412) {
         }
     };
 
-    const transacoesIds_3852 = sheets_5721.Transacoes.getRange(1, colunas_1495.Transacoes.ID + 1, sheets_5721.Transacoes.getLastRow()).getValues().flat();
+    const transacoesIds_3852 = sheets_5721['Transações com Cartão de Crédito'].getRange(1, colunas_1495['Transações com Cartão de Crédito'].ID + 1, sheets_5721['Transações com Cartão de Crédito'].getLastRow()).getValues().flat();
     const transacaoIndex_5285 = transacoesIds_3852.indexOf(id_2412);
 
     if (transacaoIndex_5285 === -1) {
@@ -52,14 +53,14 @@ function processarParcelamento_7394(id_2412) {
     }
 
     const row_8531 = transacaoIndex_5285 + 1;
-    const transacaoRange_9642 = sheets_5721.Transacoes.getRange(row_8531, 1, 1, sheets_5721.Transacoes.getLastColumn());
+    const transacaoRange_9642 = sheets_5721['Transações com Cartão de Crédito'].getRange(row_8531, 1, 1, sheets_5721['Transações com Cartão de Crédito'].getLastColumn());
     const transacaoValues_7392 = transacaoRange_9642.getValues()[0];
 
-    const parcelamento_9834 = transacaoValues_7392[colunas_1495.Transacoes.Parcelamento];
-    const quantidadeParcelas_2947 = transacaoValues_7392[colunas_1495.Transacoes.QuantidadeParcelas];
-    const lancamento_8561 = transacaoValues_7392[colunas_1495.Transacoes.Lancamento];
-    const valorIndividualParcela_6384 = transacaoValues_7392[colunas_1495.Transacoes.ValorIndividualParcela];
-    const cartaoCredito_5294 = transacaoValues_7392[colunas_1495.Transacoes.CartaoCredito];
+    const parcelamento_9834 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito'].Parcelamento];
+    const quantidadeParcelas_2947 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Quantidade de Parcelas']];
+    const lancamento_8561 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito'].Lançamento];
+    const valorIndividualParcela_6384 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Valor Individual/Parcela']];
+    const cartaoCredito_5294 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Cartão de Crédito']];
 
     const allParcelamentos_3853 = sheets_5721.Parcelamentos.getDataRange().getValues();
 
