@@ -43,13 +43,11 @@ function processarParcelamento_7394(id_2412) {
     const row_8531 = transacaoIndex_5285 + 1;
     const transacaoRange_9642 = sheets_5721['Transações com Cartão de Crédito'].getRange(row_8531, 1, 1, sheets_5721['Transações com Cartão de Crédito'].getLastColumn());
     const transacaoValues_7392 = transacaoRange_9642.getValues()[0];
-
     const parcelamento_9834 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Parcelamento']];
     const quantidadeParcelas_2947 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Quantidade de Parcelas']];
     const lancamento_8561 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Lançamento']];
     const valorIndividualParcela_6384 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Valor Individual/Parcela']];
     const cartaoCredito_5294 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Cartão de Crédito']];
-
     const allParcelamentos_3853 = sheets_5721['Parcelamentos no Cartão de Crédito'].getDataRange().getValues();
 
     if (parcelamento_9834 === 'Sim') {
@@ -71,7 +69,6 @@ function processarParcelamento_7394(id_2412) {
                 const linha_4733 = allParcelamentos_3853.findIndex(row =>
                     row[colunas_1495['Parcelamentos no Cartão de Crédito'].ID] === parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito'].ID]
                 );
-
                 const updateParcelamento_2847 = [
                     parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito']['ID']],
                     id_2412,
@@ -82,7 +79,6 @@ function processarParcelamento_7394(id_2412) {
                     valorIndividualParcela_6384,
                     parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito']['Observações']]
                 ];
-
                 sheets_5721['Parcelamentos no Cartão de Crédito'].getRange(linha_4733 + 1, 1, 1, updateParcelamento_2847.length).setValues([updateParcelamento_2847]);
                 updatedRows_8462++;
             } else {
@@ -98,7 +94,6 @@ function processarParcelamento_7394(id_2412) {
                     ''
                 ];
                 dadosParaInserir_7492.push(newParcelamento_8574);
-
                 if (dadosParaInserir_7492.length >= batchSize_9638) {
                     const lastRow_7539 = sheets_5721['Parcelamentos no Cartão de Crédito'].getLastRow();
                     sheets_5721['Parcelamentos no Cartão de Crédito'].getRange(lastRow_7539 + 1, 1, dadosParaInserir_7492.length, dadosParaInserir_7492[0].length).setValues(dadosParaInserir_7492);
@@ -134,6 +129,7 @@ function processarParcelamento_7394(id_2412) {
             .sort((a, b) => b - a);
 
         let linhasExcluidas_3957 = 0;
+
         if (indicesParaExcluir_9374.length > 0) {
             const batchSizeDelete_7392 = Math.min(Math.max(Math.round(indicesParaExcluir_9374.length * 0.25), 25), 250);
             for (let i = 0; i < indicesParaExcluir_9374.length; i += batchSizeDelete_7392) {
@@ -147,7 +143,10 @@ function processarParcelamento_7394(id_2412) {
     }
 
     const endTime_9385 = new Date();
+
     const executionTime_3857 = endTime_9385.getTime() - startTime_8254.getTime();
+
     const formattedTime_6482 = new Date(executionTime_3857).toISOString().substr(11, 8);
+
     console.log("Tempo de execução: " + formattedTime_6482);
 }
