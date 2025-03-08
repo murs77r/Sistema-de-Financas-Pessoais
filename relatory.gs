@@ -606,7 +606,14 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                 }
 
                 if ((mesAnoUltimoMes_3523 || lancamentocartao_3233) && tabela !== 'Transações com Saldo') {
-                    const valor = parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) : parseFloat(linha[colunasTabela['Valor Individual/Parcela']]);
+                    let valor;
+                    if (linha[colunasTabela['Parcelamento']] === 'Sim') {
+                        const idtransacao_2432 = linha[colunasTabela['ID']];
+                        const mesdelancamento_2431 = mesAnoUltimoMes_3523 || lancamentocartao_3233;
+                        valor = obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431);
+                    } else {
+                        valor = parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) : parseFloat(linha[colunasTabela['Valor Individual/Parcela']]);
+                    }
                     if (categoria) {
                         categoria = categoria.replace(/^Receita - /, '').replace(/^Despesa - /, '');
                         const chave = `${categoria}|${tipoCategoria}`;
@@ -1109,8 +1116,8 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                     <table width="100%" border="0" cellspacing="0" cellpadding="8" style="border-collapse: collapse; background-color: #000; color: white;">
                       <tr class="cabecalho">
                         <th style="text-align: left; width: 15%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DATA/STATUS</th>
-                        <th style="text-align: left; width: 40%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DESCRIÇÃO</th>
-                        <th style="text-align: left; width: 32.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">${nomeColuna_1242}</th>
+                        <th style="text-align: left; width: 47%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DESCRIÇÃO</th>
+                        <th style="text-align: left; width: 25.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">${nomeColuna_1242}</th>
                         <th style="text-align: right; width: 12.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">${filtros1214 !== 'Mostrar' || tipo_2956 === 'Cartão de Crédito' || (tipo_2956 = 'Cartão de Crédito' && (tempo_8213 === 'Último Mês' || tempo_8213 === 'Antes e Durante Último Mês')) ? valorSomadoFormatado_8364.replace('-', '') : valorSomadoFormatado_8364}</th>
                       </tr>
                     </table>
@@ -1370,7 +1377,14 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                 }
 
                 if ((mesAnoUltimoMes_3523 || lancamentocartao_3233) && tabela !== 'Transações com Saldo') {
-                    const valor = parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) : parseFloat(linha[colunasTabela['Valor Individual/Parcela']]);
+                    let valor;
+                    if (linha[colunasTabela['Parcelamento']] === 'Sim') {
+                        const idtransacao_2432 = linha[colunasTabela['ID']];
+                        const mesdelancamento_2431 = mesAnoUltimoMes_3523 || lancamentocartao_3233;
+                        valor = obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431);
+                    } else {
+                        valor = parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha[colunasTabela['Valor Individual/Parcela']]) : parseFloat(linha[colunasTabela['Valor Individual/Parcela']]);
+                    }
                     if (categoria) {
                         categoria = categoria.replace(/^Receita - /, '').replace(/^Despesa - /, '');
                         const chave = `${categoria}|${tipoCategoria}`;
@@ -1461,8 +1475,8 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                     <table width="100%" border="0" cellspacing="0" cellpadding="8" style="border-collapse: collapse; background-color: #000; color: white;">
                       <tr class="cabecalho">
                         <th style="text-align: left; width: 15%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DATA/STATUS</th>
-                        <th style="text-align: left; width: 40%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DESCRIÇÃO</th>
-                        <th style="text-align: left; width: 32.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">${nomeColuna_1242}</th>
+                        <th style="text-align: left; width: 47%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DESCRIÇÃO</th>
+                        <th style="text-align: left; width: 25.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">${nomeColuna_1242}</th>
                         <th style="text-align: right; width: 12.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">${filtros1214 !== 'Mostrar' || tipo_2956 === 'Cartão de Crédito' || (tipo_2956 === 'Cartão de Crédito' && (tempo_8213 === 'Último Mês' || tempo_8213 === 'Antes e Durante Último Mês')) ? valorSomadoFormatado_8364.replace('-', '') : valorSomadoFormatado_8364}</th>
                       </tr>
                     </table>
@@ -1611,7 +1625,7 @@ function processarReceitas_8352(receitas_4578) {
                     <table width="100%" border="0" cellspacing="0" cellpadding="8" style="border-collapse: collapse; background-color: #000; color: white;">
                         <tr class="cabecalho" style="height: 37.5px">
                             <th style="text-align: left; width: 65%; font-size: 0.865rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">RECEITAS</th>
-                            <th style="text-align: left; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">PERCENTUAL</th>
+                            <th style="text-align: left; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">PARTE</th>
                             <th style="text-align: right; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">VALOR</th>
                         </tr>
                     </table>
@@ -1643,7 +1657,7 @@ function processarReceitas_8352(receitas_4578) {
     tabelaHTML_3857 += `
         <tr style="background-color: #000; color: white;">
             <td style="width: 65%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">TOTAL</td>
-            <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">100,00%</td>
+            <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;"></td>
             <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">${totalReceitas_9472.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
         </tr>`;
 
@@ -1678,7 +1692,7 @@ function processarDespesas_7491(despesas_9274) {
                     <table width="100%" border="0" cellspacing="0" cellpadding="8" style="border-collapse: collapse; background-color: #000; color: white;">
                         <tr class="cabecalho" style="height: 37.5px">
                             <th style="text-align: left; width: 65%; font-size: 0.865rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">DESPESAS</th>
-                            <th style="text-align: left; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">PERCENTUAL</th>
+                            <th style="text-align: left; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">PARTE</th>
                             <th style="text-align: right; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">VALOR</th>
                         </tr>
                     </table>
@@ -1744,7 +1758,22 @@ function processarOperadores_2332(dados_3805, colunas_1495, tipo_2956, mesAnoUlt
                 }
             }
         } else {
-            let valor_8539 = mesAnoUltimoMes_3523 || lancamentocartao_3245 ? parseFloat(linha_8361[colunasTabela_6381['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha_8361[colunasTabela_6381['Valor Individual/Parcela']]) : parseFloat(linha_8361[colunasTabela_6381['Valor Individual/Parcela']]) : parseFloat(linha_8361[colunasTabela_6381['Sub-Total']]);
+            let valor_8539;
+            if (mesAnoUltimoMes_3523 || lancamentocartao_3245) {
+                if (linha_8361[colunasTabela_6381['Parcelamento']] === 'Sim') {
+                    const idtransacao_2432 = linha_8361[colunasTabela_6381['ID']];
+                    const mesdelancamento_2431 = mesAnoUltimoMes_3523 || lancamentocartao_3245;
+                    valor_8539 = obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431);
+                } else {
+                    valor_8539 = parseFloat(linha_8361[colunasTabela_6381['Valor Individual/Parcela']]);
+                    valor_8539 = valor_8539 < 0 ? -valor_8539 : valor_8539;
+                }
+            }
+            else {
+                valor_8539 = parseFloat(linha_8361[colunasTabela_6381['Sub-Total']]);
+            }
+
+
             if (linha_8361[colunasTabela_6381['Procedimento']] === 'Compra') {
                 if (operadores_9572.has(operador_4728)) {
                     operadores_9572.set(operador_4728, operadores_9572.get(operador_4728) + valor_8539);
@@ -1753,9 +1782,9 @@ function processarOperadores_2332(dados_3805, colunas_1495, tipo_2956, mesAnoUlt
                 }
             } else {
                 if (operadores_9572.has(operador_4728)) {
-                    operadores_9572.set(operador_4728, operadores_9572.get(operador_4728) + -valor_8539);
+                    operadores_9572.set(operador_4728, operadores_9572.get(operador_4728) + -valor_8539);  // Mantém a inversão de sinal
                 } else {
-                    operadores_9572.set(operador_4728, -valor_8539);
+                    operadores_9572.set(operador_4728, -valor_8539); // Mantém a inversão de sinal
                 }
             }
         }
@@ -1777,7 +1806,7 @@ function processarOperadores_2332(dados_3805, colunas_1495, tipo_2956, mesAnoUlt
                     <table width="100%" border="0" cellspacing="0" cellpadding="8" style="border-collapse: collapse; background-color: #000; color: white;">
                         <tr class="cabecalho" style="height: 37.5px">
                             <th style="text-align: left; width: 65%; font-size: 0.865rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">OPERADORES</th>
-                            <th style="text-align: left; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">PERCENTUAL</th>
+                            <th style="text-align: left; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">PARTE</th>
                             <th style="text-align: right; width: 17.5%; font-size: 0.75rem; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;">VALOR</th>
                         </tr>
                     </table>
@@ -2197,8 +2226,8 @@ function gerarLinhaHTML_9427(linha_9248, colunasTabela_5719, tabela_8402, index_
         linhaHTML_6308 = `
     <tr style="background-color: ${bgColor_4720}>
       <td style="width: 15%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${data_4937}</td>
-      <td style="width: 40%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${descricao_5826}</td>
-      <td style="width: 32.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${nome_3958}</td>
+      <td style="width: 47%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${descricao_5826}</td>
+      <td style="width: 25.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${nome_3958}</td>
       <td style="width: 12.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${valor_2849}</td>
     </tr>
   `;
@@ -2210,8 +2239,8 @@ function gerarLinhaHTML_9427(linha_9248, colunasTabela_5719, tabela_8402, index_
             linhaHTML_6308 = `
       <tr style="background-color: ${bgColor_4720}>
         <td style="width: 15%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${data_4937}</td>
-        <td style="width: 40%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${descricao_5826}</td>
-        <td style="width: 32.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${nome_3958}</td>
+        <td style="width: 47%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${descricao_5826}</td>
+        <td style="width: 25.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${nome_3958}</td>
         <td style="width: 12.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${valor_2849}<br><span style="margin-top: 2px; font-size: 0.55rem;">${qtdpar_2456}x de ${valor_2456}</span></td>
       </tr>
     `;
@@ -2219,8 +2248,8 @@ function gerarLinhaHTML_9427(linha_9248, colunasTabela_5719, tabela_8402, index_
             linhaHTML_6308 = `
       <tr style="background-color: ${bgColor_4720}>
         <td style="width: 15%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${data_4937}</td>
-        <td style="width: 40%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${descricao_5826}</td>
-        <td style="width: 32.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${nome_3958}</td>
+        <td style="width: 47%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${descricao_5826}</td>
+        <td style="width: 25.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${nome_3958}</td>
         <td style="width: 12.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; height: 60px;">${valor_2849}</td>
       </tr>
     `;
@@ -2751,6 +2780,63 @@ function doGet() {
 function validarParametro_5243(valor_9582) {
     const valorValidado_6294 = (valor_9582 === "" || valor_9582 === null) ? undefined : valor_9582;
     return valorValidado_6294;
+}
+
+function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431) {
+    const spreadsheet_6248 = SpreadsheetApp.openById(spreedsheet_id());
+    const sheet_9527 = spreadsheet_6248.getSheetByName('Parcelamentos no Cartão de Crédito');
+    if (!sheet_9527) {
+        throw new Error("Planilha 'Parcelamentos no Cartão de Crédito' não encontrada.");
+    }
+
+    const colunas_1495 = {
+        'Parcelamentos no Cartão de Crédito': {
+            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Lançamento': 3, 'Cartão de Crédito': 4, 'Valor Base': 5, 'Valor Efetivo': 6, 'Observações': 7
+        }
+    };
+
+    const ultimaLinha_8306 = sheet_9527.getLastRow();
+    const cabecalhoRow_7519 = 1;
+    const linhaDados_4982 = cabecalhoRow_7519 + 1;
+    if (ultimaLinha_8306 < linhaDados_4982) {
+        throw new Error("A planilha 'Parcelamentos no Cartão de Crédito' está vazia.");
+    }
+
+    const totalLinhas_3957 = ultimaLinha_8306 - cabecalhoRow_7519;
+    const minBatchSize_6283 = 25;
+    const maxBatchSize_9158 = 250;
+    const batchSize_7492 = Math.min(maxBatchSize_9158, Math.max(minBatchSize_6283, Math.round(totalLinhas_3957 * 0.15)));
+    const numColunas_4827 = sheet_9527.getLastColumn();
+
+    let correspondenciasEncontradas_6391 = 0;
+
+    for (let i = linhaDados_4982; i <= ultimaLinha_8306; i += batchSize_7492) {
+        const currentBatchSize_8205 = Math.min(batchSize_7492, ultimaLinha_8306 - i + 1);
+        const range_4691 = sheet_9527.getRange(i, 1, currentBatchSize_8205, numColunas_4827);
+        const values_2916 = range_4691.getValues();
+
+        for (let j = 0; j < values_2916.length; j++) {
+            const linha_5729 = values_2916[j];
+            if (linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['ID da Transação']] === idtransacao_2432 &&
+                linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['Lançamento']] === mesdelancamento_2431) {
+
+                correspondenciasEncontradas_6391++;
+                if (correspondenciasEncontradas_6391 > 1) {
+                    throw new Error(`Mais de uma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+                }
+
+                const valorBase_7429 = parseFloat(linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['Valor Base']]);
+                if (isNaN(valorBase_7429)) {
+                    throw new Error(`Valor Base inválido encontrado para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+                }
+                return valorBase_7429;
+            }
+        }
+    }
+    if (correspondenciasEncontradas_6391 === 0) {
+        throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+    }
+
 }
 
 function encurtarUrlBase64_4829(str_6390) {
