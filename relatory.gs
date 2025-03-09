@@ -1226,7 +1226,7 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                 html_2951 += insightgerado_9111
 
                 if (imprimir_3857 === false) {
-                    html_2951 = html_2951.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`${contaFinanceira_3918 ? '&contaFinanceira=' + contaFinanceira_3918 : ''}${cartaoCredito_7329 ? '&cartaoCredito=' + cartaoCredito_7329 : ''}${lancamentocartao_3233 ? '&lancamentocartao=' + lancamentocartao_3233 : ''}${descricao_6485 ? '&descricao=' + descricao_6485 : ''}${procedimentoSaldo_5147 ? '&procedimentoSaldo=' + procedimentoSaldo_5147 : ''}${operacaoSaldo_7294 ? '&operacaoSaldo=' + operacaoSaldo_7294 : ''}${datainicial_9531 ? '&datainicial=' + datainicial_9531 : ''}${datafinal_4692 ? '&datafinal=' + datafinal_4692 : ''}${'tipo= + tipo_2956'}${tempo_8213 ? '&tempo=' + tempo_8213 : ''}${operador_1853 ? '&operador=' + operador_1853 : ''}${procedimentoCartao_8964 ? '&procedimentoCartao=' + procedimentoCartao_8964 : ''}${categoria_4108 ? '&categoria=' + categoria_4108 : ''}${idRecorrencia_2759 ? '&idRecorrencia=' + idRecorrencia_2759 : ''}${relevanteImpostoRenda_5831 ? '&relevanteImpostoRenda=' + relevanteImpostoRenda_5831 : ''}${status_6925 ? '&status=' + status_6925 : ''}${qtdeparcelas_2143 ? '&qtdeparcelas=' + qtdeparcelas_2143 : ''}${parcelas_2321 ? '&parcelamento=' + parcelas_2321 : ''}${gerarInsights_1344 ? '&recomendacoes=' + gerarInsights_1344 : ''}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
+                    html_2951 = html_2951.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`${contaFinanceira_3918 ? '&contaFinanceira=' + contaFinanceira_3918 : ''}${cartaoCredito_7329 ? '&cartaoCredito=' + cartaoCredito_7329 : ''}${lancamentocartao_3233 ? '&lancamentocartao=' + lancamentocartao_3233 : ''}${descricao_6485 ? '&descricao=' + descricao_6485 : ''}${procedimentoSaldo_5147 ? '&procedimentoSaldo=' + procedimentoSaldo_5147 : ''}${operacaoSaldo_7294 ? '&operacaoSaldo=' + operacaoSaldo_7294 : ''}${datainicial_9531 ? '&datainicial=' + datainicial_9531 : ''}${datafinal_4692 ? '&datafinal=' + datafinal_4692 : ''}${tipo_2956 ? '&tipo=' + tipo_2956 : ''}${tempo_8213 ? '&tempo=' + tempo_8213 : ''}${operador_1853 ? '&operador=' + operador_1853 : ''}${procedimentoCartao_8964 ? '&procedimentoCartao=' + procedimentoCartao_8964 : ''}${categoria_4108 ? '&categoria=' + categoria_4108 : ''}${idRecorrencia_2759 ? '&idRecorrencia=' + idRecorrencia_2759 : ''}${relevanteImpostoRenda_5831 ? '&relevanteImpostoRenda=' + relevanteImpostoRenda_5831 : ''}${status_6925 ? '&status=' + status_6925 : ''}${qtdeparcelas_2143 ? '&qtdeparcelas=' + qtdeparcelas_2143 : ''}${parcelas_2321 ? '&parcelamento=' + parcelas_2321 : ''}${gerarInsights_1344 ? '&recomendacoes=' + gerarInsights_1344 : ''}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
                 }
             }
 
@@ -1657,7 +1657,7 @@ function processarReceitas_8352(receitas_4578) {
     tabelaHTML_3857 += `
         <tr style="background-color: #000; color: white;">
             <td style="width: 65%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">TOTAL</td>
-            <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;"></td>
+            <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">100%</td>
             <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">${totalReceitas_9472.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
         </tr>`;
 
@@ -1723,7 +1723,7 @@ function processarDespesas_7491(despesas_9274) {
     tabelaHTML_8472 += `
           <tr style="background-color: #000; color: white; ">
               <td style="width: 65%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">TOTAL</td>
-              <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;"></td>
+              <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">100%</td>
               <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">${totalDespesas_4827.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
           </tr>`;
 
@@ -1838,7 +1838,7 @@ function processarOperadores_2332(dados_3805, colunas_1495, tipo_2956, mesAnoUlt
         tabelaHTML_7491 += `
             <tr style="background-color: #000; color: white;">
                 <td style="width: 65%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">TOTAL</td>
-                <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;"></td>
+                <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: left; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">100%</td>
                 <td style="width: 17.5%; vertical-align: middle; font-size: 0.75rem; text-align: right; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif; font-weight: bold;">${totalOperadores_2947.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
             </tr>`;
 
