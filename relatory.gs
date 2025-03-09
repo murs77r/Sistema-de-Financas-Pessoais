@@ -575,6 +575,7 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
     const fileCache_7426 = getFileCache_5431();
     const nomeColuna_1242 = getNomeColuna_2836(tipo_2956)
     const insights_2145 = gerarInsights_1344
+    const tipogerador_2413 = tipo_2956
 
     if (condicaodegeracao_6834 !== "Segmentado") {
         let html_2951 = ``;
@@ -1226,7 +1227,7 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                 html_2951 += insightgerado_9111
 
                 if (imprimir_3857 === false) {
-                    html_2951 = html_2951.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`${contaFinanceira_3918 ? '&contaFinanceira=' + contaFinanceira_3918 : ''}${cartaoCredito_7329 ? '&cartaoCredito=' + cartaoCredito_7329 : ''}${lancamentocartao_3233 ? '&lancamentocartao=' + lancamentocartao_3233 : ''}${descricao_6485 ? '&descricao=' + descricao_6485 : ''}${procedimentoSaldo_5147 ? '&procedimentoSaldo=' + procedimentoSaldo_5147 : ''}${operacaoSaldo_7294 ? '&operacaoSaldo=' + operacaoSaldo_7294 : ''}${datainicial_9531 ? '&datainicial=' + datainicial_9531 : ''}${datafinal_4692 ? '&datafinal=' + datafinal_4692 : ''}${tipo_2956 ? '&tipo=' + tipo_2956 : ''}${tempo_8213 ? '&tempo=' + tempo_8213 : ''}${operador_1853 ? '&operador=' + operador_1853 : ''}${procedimentoCartao_8964 ? '&procedimentoCartao=' + procedimentoCartao_8964 : ''}${categoria_4108 ? '&categoria=' + categoria_4108 : ''}${idRecorrencia_2759 ? '&idRecorrencia=' + idRecorrencia_2759 : ''}${relevanteImpostoRenda_5831 ? '&relevanteImpostoRenda=' + relevanteImpostoRenda_5831 : ''}${status_6925 ? '&status=' + status_6925 : ''}${qtdeparcelas_2143 ? '&qtdeparcelas=' + qtdeparcelas_2143 : ''}${parcelas_2321 ? '&parcelamento=' + parcelas_2321 : ''}${gerarInsights_1344 ? '&recomendacoes=' + gerarInsights_1344 : ''}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
+                    html_2951 = html_2951.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`${contaFinanceira_3918 ? '&contaFinanceira=' + contaFinanceira_3918 : ''}${cartaoCredito_7329 ? '&cartaoCredito=' + cartaoCredito_7329 : ''}${lancamentocartao_3233 ? '&lancamentocartao=' + lancamentocartao_3233 : ''}${descricao_6485 ? '&descricao=' + descricao_6485 : ''}${procedimentoSaldo_5147 ? '&procedimentoSaldo=' + procedimentoSaldo_5147 : ''}${operacaoSaldo_7294 ? '&operacaoSaldo=' + operacaoSaldo_7294 : ''}${datainicial_9531 ? '&datainicial=' + datainicial_9531 : ''}${datafinal_4692 ? '&datafinal=' + datafinal_4692 : ''}${tipogerador_2413 ? '&tipo=' + tipogerador_2413 : ''}${tempo_8213 ? '&tempo=' + tempo_8213 : ''}${operador_1853 ? '&operador=' + operador_1853 : ''}${procedimentoCartao_8964 ? '&procedimentoCartao=' + procedimentoCartao_8964 : ''}${categoria_4108 ? '&categoria=' + categoria_4108 : ''}${idRecorrencia_2759 ? '&idRecorrencia=' + idRecorrencia_2759 : ''}${relevanteImpostoRenda_5831 ? '&relevanteImpostoRenda=' + relevanteImpostoRenda_5831 : ''}${status_6925 ? '&status=' + status_6925 : ''}${qtdeparcelas_2143 ? '&qtdeparcelas=' + qtdeparcelas_2143 : ''}${parcelas_2321 ? '&parcelamento=' + parcelas_2321 : ''}${gerarInsights_1344 ? '&recomendacoes=' + gerarInsights_1344 : ''}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
                 }
             }
 
@@ -2101,7 +2102,7 @@ function gerarHTMLconjunto_5291(htmlCCRealizadas, htmlCCIncidentes, htmlSaldo, i
         html_8520 += insightgerado_9111
 
         if (imprimir_3857 === false) {
-            html_8520 = html_8520.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`tempo=${'Último Mês'}&tipo=${'Cartão de Crédito e Saldo'}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
+            html_8520 = html_8520.replace('#$#$#SUBSTITUIRAQUIURLDERED#$#$#', encurtarUrlBase64_4829(`tempo=${'Último Mês'}&tipo=${htmlCCIncidentes || htmlCCRealizadas ? 'Cartão de Crédito e Saldo' : 'Saldo'}${insightgerado_9111 ? '&insightgerado=' + insightgerado_9111 : ''}${'&senha=MSRmsr2005@'}`))
         }
 
         html_8520 += `<p id="data-hora" style="display: none; text-align: center; font-size: 0.75rem; margin: 0px; margin-top: 23px; font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;"><b>GERADO EM ${dataFormatadaparaapr_3946.toUpperCase()}</b></p>`
