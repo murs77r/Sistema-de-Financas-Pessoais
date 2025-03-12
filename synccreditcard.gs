@@ -19,7 +19,7 @@ function sincronizarDadosEntreTabelas_7891() {
             'ID': 0, 'Nome do Cartão de Crédito': 1, 'Instituição Financeira': 2, 'Pagamento': 3,
             'Abertura': 4, 'Fechamento': 5, 'Vencimento': 6, 'Mês de Referência': 7,
             'Ano de Referência': 8, 'Mês/Ano de Referência': 9, 'Valor da Fatura': 10,
-            'Arquivo da Fatura': 11, 'Registro de Atualização': 12, 'Última Atualização': 13
+            'Arquivo da Fatura': 11, 'Registro de Atualização': 12, 'Última Atualização': 13, 'Índice': 13
         },
         'Transações com Saldo': {
             'ID': 0, 'Procedimento': 1, 'Operação': 2, 'Descrição': 3, 'Categoria - Crédito': 4,
@@ -54,7 +54,8 @@ function sincronizarDadosEntreTabelas_7891() {
     const transacoesSheet_9571 = sheets_5721['Transações com Saldo'];
     const faturasSheet_1598 = sheets_5721['Faturas de Cartões de Crédito'];
     const today_6548 = new Date();
-    today_6548.setHours(0, 0, 0, 0);
+    today_6548.setDate(0); 
+    today_6548.setHours(23, 59, 59, 999); 
 
     const numRowsFaturas_1234 = faturasSheet_1598.getDataRange().getValues().length - 1;
     const batchSize_3947 = Math.max(25, Math.min(250, Math.round(numRowsFaturas_1234 * 0.15)));
