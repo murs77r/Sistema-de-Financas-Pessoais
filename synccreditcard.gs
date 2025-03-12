@@ -54,8 +54,8 @@ function sincronizarDadosEntreTabelas_7891() {
     const transacoesSheet_9571 = sheets_5721['Transações com Saldo'];
     const faturasSheet_1598 = sheets_5721['Faturas de Cartões de Crédito'];
     const today_6548 = new Date();
-    today_6548.setDate(0); 
-    today_6548.setHours(23, 59, 59, 999); 
+    today_6548.setDate(0);
+    today_6548.setHours(23, 59, 59, 999);
 
     const numRowsFaturas_1234 = faturasSheet_1598.getDataRange().getValues().length - 1;
     const batchSize_3947 = Math.max(25, Math.min(250, Math.round(numRowsFaturas_1234 * 0.15)));
@@ -147,7 +147,7 @@ function sincronizarDadosEntreTabelas_7891() {
 
             let transacaoEncontrada_5698 = false;
             let transacaoLinha_8567 = null;
-            transacaoEncontrada_5698 = false; //Reinicialização da variável, conforme solicitado
+            transacaoEncontrada_5698 = false;
 
             const indicesDuplicatas_9123 = [];
             for (let i = 0; i < transacoesData_3185.length; i++) {

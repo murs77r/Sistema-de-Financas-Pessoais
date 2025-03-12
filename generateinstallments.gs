@@ -12,7 +12,7 @@ function processarParcelamento_7394(id_2412) {
             'ID': 0, 'Procedimento': 1, 'Descrição': 2, 'Categoria': 3, 'Status': 4, 'Operador': 5, 'Data de Registro': 6, 'Horário de Registro': 7, 'Programado': 8, 'Data Programada': 9, 'Horário Programado': 10, 'Data de Efetivação': 11, 'Horário da Efetivação': 12, 'Lançamento Indicativo': 13, 'Indicativo de Mês': 14, 'Mês da Transação': 15, 'Indicativo de Ano': 16, 'Ano da Transação': 17, 'Parcelamento': 18, 'Quantidade de Parcelas': 19, 'Lançamento': 20, 'Cartão de Crédito': 21, 'Valor Base': 22, 'Taxas ou Impostos': 23, 'Sub-Total': 24, 'Total Efetivo': 25, 'Valor Individual/Parcela': 26, 'Termos do Serviço': 27, 'Documento Comprobatório': 28, 'Link do Documento Fiscal': 29, 'Observações': 30, 'Relevante para Imposto de Renda': 31, 'Registro de Atualização': 32, 'Última Atualização': 33, 'ID da Recorrência': 34
         },
         'Parcelamentos no Cartão de Crédito': {
-            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Lançamento': 3, 'Cartão de Crédito': 4, 'Valor Base': 5, 'Valor Efetivo': 6, 'Observações': 7
+            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Data de Efetivação': 3, 'Horário da Efetivação': 4, 'Lançamento': 5, 'Cartão de Crédito': 6, 'Valor Base': 7, 'Valor Efetivo': 8, 'Observações': 9
         }
     };
 
@@ -45,6 +45,8 @@ function processarParcelamento_7394(id_2412) {
     const transacaoValues_7392 = transacaoRange_9642.getValues()[0];
     const parcelamento_9834 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Parcelamento']];
     const quantidadeParcelas_2947 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Quantidade de Parcelas']];
+    const datadeefetivacao_8561 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Data de Efetivação']];
+    const horariodeefetivacao_8561 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Horário da Efetivação']];
     const lancamento_8561 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Lançamento']];
     const valorIndividualParcela_6384 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Valor Individual/Parcela']];
     const cartaoCredito_5294 = transacaoValues_7392[colunas_1495['Transações com Cartão de Crédito']['Cartão de Crédito']];
@@ -67,12 +69,14 @@ function processarParcelamento_7394(id_2412) {
 
             if (parcelamentoExistente_8474) {
                 const linha_4733 = allParcelamentos_3853.findIndex(row =>
-                    row[colunas_1495['Parcelamentos no Cartão de Crédito'].ID] === parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito'].ID]
+                    row[colunas_1495['Parcelamentos no Cartão de Crédito']['ID']] === parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito']['ID']]
                 );
                 const updateParcelamento_2847 = [
                     parcelamentoExistente_8474[colunas_1495['Parcelamentos no Cartão de Crédito']['ID']],
                     id_2412,
                     parcelaNum_9473,
+                    datadeefetivacao_8561,
+                    horariodeefetivacao_8561,
                     mesAno_9647,
                     cartaoCredito_5294,
                     -valorIndividualParcela_6384,
@@ -87,6 +91,8 @@ function processarParcelamento_7394(id_2412) {
                     idParcela_8573,
                     id_2412,
                     parcelaNum_9473,
+                    datadeefetivacao_8561,
+                    horariodeefetivacao_8561,
                     mesAno_9647,
                     cartaoCredito_5294,
                     -valorIndividualParcela_6384,
