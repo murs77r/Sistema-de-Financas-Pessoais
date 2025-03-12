@@ -2792,7 +2792,7 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
 
     const colunas_1495 = {
         'Parcelamentos no Cartão de Crédito': {
-            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Lançamento': 3, 'Cartão de Crédito': 4, 'Valor Base': 5, 'Valor Efetivo': 6, 'Observações': 7
+            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Data de Efetivação': 3, 'Horário da Efetivação': 4,'Lançamento': 5, 'Cartão de Crédito': 6, 'Valor Base': 7, 'Valor Efetivo': 8, 'Observações': 9
         }
     };
 
