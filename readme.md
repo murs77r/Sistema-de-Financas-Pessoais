@@ -16,7 +16,7 @@ Os scripts deste repositório oferecem um conjunto abrangente de funcionalidades
 ## 📊 Atualizações Futuras
 
 - Configurar o **RELATÓRIO DE TRANSAÇÕES** para adicionar uma tabela unificada das receitas e despesas mensais, configurando devidamente para a integração com a API do GEMINI.
-- Providenciar um sistema mais otimizado e eficiente para **GESTÃO DE ARQUIVOS** no Google Drive.
+- Providenciar um sistema mais otimizado e eficiente para **GESTÃO DE ARQUIVOS** no Google Drive e geração de comprovantes no **GOOGLE DOCS** (Appsheet).
 - Providenciar um sistema mais otimizado e eficiente para **CONTROLE DE INVESTIMENTOS**.
 - Estilizar o acesso individual aos **CARTÕES DE CRÉDITO** (Appsheet).
 - Configurar a **GERAÇÃO DE FATURAS MÊS A MÊS**, por 24 meses além do mês atual considerando a questão de data de abertura, fechamento e vencimento.
