@@ -2568,7 +2568,7 @@ function getFileCache_5431() {
 }
 
 function enviarParaAPI_5433(html_7301, subject_1239 = undefined) {
-    const secretToken_9462 = "X1u!Mgiz#GBp6YwaUSVj#r8xElCh=f1yf0FQ6lLxlu8VO&N6Ggw3Tt_EQd!lHs&2UDx3=YWPTc5Up@7v";
+    const secretToken_9462 = secrettoken_id();
     const encodedToken_4729 = Utilities.base64EncodeWebSafe(secretToken_9462);
 
     const now_5820 = new Date();
@@ -2597,7 +2597,7 @@ function enviarParaAPI_5433(html_7301, subject_1239 = undefined) {
 
 function doPost(e) {
     const startTime = new Date();
-    const tokenpadrao_7419 = "EJs2wADrAaxFJrKNAFII5wuxJw4W7Z28PAadlqCg9V8jKpruf6";
+    const tokenpadrao_7419 = secrettoken_id();
 
     const params_5937 = e.parameter;
     const tempo_4826 = validarParametro_5243(params_5937.tempo);
