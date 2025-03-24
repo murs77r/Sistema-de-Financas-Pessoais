@@ -1081,7 +1081,18 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
 
                         if (mesAnoInterno_9168 === mesAno_5930) {
                             if (tabelaInterna_2957 === 'Transações com Cartão de Crédito') {
-                                const valor_6482 = mesAnoUltimoMes_3523 || lancamentocartao_3233 ? -parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) < 0 ? -parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) : parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) : parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Sub-Total']]);
+                                let valor_6482;
+                                if (mesAnoUltimoMes_3523 || lancamentocartao_3233) {
+                                    if (linhaInterna_6839[colunasTabelaInterna_8416['Parcelamento']] === 'Sim') {
+                                        const idtransacao_2432 = linhaInterna_6839[colunasTabelaInterna_8416['ID']];
+                                        const mesdelancamento_2431 = mesAnoUltimoMes_3523 || lancamentocartao_3233;
+                                        valor_6482 = obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431);
+                                    } else {
+                                        valor_6482 = parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) < 0 ? -parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) : parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]);
+                                    }
+                                } else {
+                                    valor_6482 = parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Sub-Total']])
+                                }
                                 if (!isNaN(valor_6482)) {
                                     if (linhaInterna_6839[colunasTabelaInterna_8416['Procedimento']] === 'Compra') {
                                         somaValores_4728 -= valor_6482;
@@ -1169,7 +1180,18 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
                             }
                         }
                     } else {
-                        const valor_6482 = mesAnoUltimoMes_3523 || lancamentocartao_3233 ? -parseFloat(linha_9248[colunasTabela_5719['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha_9248[colunasTabela_5719['Valor Individual/Parcela']]) : parseFloat(linha_9248[colunasTabela_5719['Valor Individual/Parcela']]) : parseFloat(linha_9248[colunasTabela_5719['Sub-Total']]);
+                        let valor_6482;
+                        if (mesAnoUltimoMes_3523 || lancamentocartao_3233) {
+                            if (linha_9248[colunasTabela_5719['Parcelamento']] === 'Sim') {
+                                const idtransacao_2432 = linha_9248[colunasTabela_5719['ID']];
+                                const mesdelancamento_2431 = mesAnoUltimoMes_3523 || lancamentocartao_3233;
+                                valor_6482 = obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431);
+                            } else {
+                                valor_6482 = parseFloat(linha_9248[colunasTabela_5719['Valor Individual/Parcela']]) < 0 ? -parseFloat(linha_9248[colunasTabela_5719['Valor Individual/Parcela']]) : parseFloat(linha_9248[colunasTabela_5719['Valor Individual/Parcela']]);
+                            }
+                        } else {
+                            valor_6482 = parseFloat(linha_9248[colunasTabela_5719['Sub-Total']])
+                        }
                         if (categoria_5294 && !isNaN(valor_6482)) {
                             if (totaisPorCategoria.has(chaveCategoriaTipo)) {
                                 const valorExistente = totaisPorCategoria.get(chaveCategoriaTipo);
@@ -1439,7 +1461,18 @@ function gerarHTML_3618(dados_3805, colunas_1495, tipo_2956, tempo_8213, operado
 
                         if (mesAnoInterno_9168 === mesAno_5930) {
                             if (tabelaInterna_2957 === 'Transações com Cartão de Crédito') {
-                                const valor_6482 = mesAnoUltimoMes_3523 || lancamentocartao_3233 ? -parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) < 0 ? -parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) : parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) : parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Sub-Total']]);
+                                let valor_6482;
+                                if (mesAnoUltimoMes_3523 || lancamentocartao_3233) {
+                                    if (linhaInterna_6839[colunasTabelaInterna_8416['Parcelamento']] === 'Sim') {
+                                        const idtransacao_2432 = linhaInterna_6839[colunasTabelaInterna_8416['ID']];
+                                        const mesdelancamento_2431 = mesAnoUltimoMes_3523 || lancamentocartao_3233;
+                                        valor_6482 = obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431);
+                                    } else {
+                                        valor_6482 = parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) < 0 ? -parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]) : parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Valor Individual/Parcela']]);
+                                    }
+                                } else {
+                                    valor_6482 = parseFloat(linhaInterna_6839[colunasTabelaInterna_8416['Sub-Total']])
+                                }
                                 if (!isNaN(valor_6482)) {
                                     if (linhaInterna_6839[colunasTabelaInterna_8416['Procedimento']] === 'Compra') {
                                         somaValores_4728 -= valor_6482;
@@ -2792,7 +2825,7 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
 
     const colunas_1495 = {
         'Parcelamentos no Cartão de Crédito': {
-            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Data de Efetivação': 3, 'Horário da Efetivação': 4,'Lançamento': 5, 'Cartão de Crédito': 6, 'Valor Base': 7, 'Valor Efetivo': 8, 'Observações': 9
+            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Data de Efetivação': 3, 'Horário da Efetivação': 4, 'Lançamento': 5, 'Cartão de Crédito': 6, 'Valor Base': 7, 'Valor Efetivo': 8, 'Observações': 9
         }
     };
 
