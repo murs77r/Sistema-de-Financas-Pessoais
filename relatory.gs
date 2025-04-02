@@ -2833,7 +2833,7 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
     const cabecalhoRow_7519 = 1;
     const linhaDados_4982 = cabecalhoRow_7519 + 1;
     if (ultimaLinha_8306 < linhaDados_4982) {
-        throw new Error("A planilha 'Parcelamentos no Cartão de Crédito' está vazia.");
+        throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} na planilha 'Parcelamentos no Cartão de Crédito' (planilha vazia ou sem dados).`);
     }
 
     const totalLinhas_3957 = ultimaLinha_8306 - cabecalhoRow_7519;
@@ -2867,10 +2867,30 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
             }
         }
     }
+
     if (correspondenciasEncontradas_6391 === 0) {
-        throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+        for (let i = linhaDados_4982; i <= ultimaLinha_8306; i += batchSize_7492) {
+            const currentBatchSize_8205 = Math.min(batchSize_7492, ultimaLinha_8306 - i + 1);
+            const range_4691 = sheet_9527.getRange(i, 1, currentBatchSize_8205, numColunas_4827);
+            const values_2916 = range_4691.getValues();
+
+            for (let j = 0; j < values_2916.length; j++) {
+                const linha_5729 = values_2916[j];
+                if (linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['ID da Transação']] === idtransacao_2432 &&
+                    linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['Parcela']] == 1) {
+
+                    const valorBase_7429 = parseFloat(linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['Valor Base']]);
+                    if (isNaN(valorBase_7429)) {
+                        throw new Error(`Valor Base inválido encontrado para a primeira parcela (fallback) da ID da Transação ${idtransacao_2432} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+                    }
+                    return valorBase_7429;
+                }
+            }
+        }
+        throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431}, nem para a Parcela 1 da ID ${idtransacao_2432}, na planilha 'Parcelamentos no Cartão de Crédito'.`);
     }
 
+    throw new Error(`Erro inesperado na lógica da função para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431}.`);
 }
 
 function encurtarUrlBase64_4829(str_6390) {
