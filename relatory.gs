@@ -2173,7 +2173,7 @@ function processarGemini_5312(dados_9140, dados1243 = undefined) {
             }
         };
 
-        const url_7319 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent?key=" + API_KEY_2957;
+        const url_7319 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-exp-03-25:generateContent?key=" + API_KEY_2957;
 
         const options_1846 = {
             method: "post",
@@ -2818,7 +2818,7 @@ function validarParametro_5243(valor_9582) {
 
 function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431) {
     const cache_3518 = CacheService.getScriptCache();
-    const cacheKey_7294 = 'valorBaseParcelamento_' + idtransacao_2432;
+    const cacheKey_7294 = 'valorBaseParcelamento_' + idtransacao_2432 + '_' + mesdelancamento_2431;
     const cachedValue_6103 = cache_3518.get(cacheKey_7294);
 
     if (cachedValue_6103 !== null) {
@@ -2876,9 +2876,9 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
                 break;
             }
         }
-         if (valorBaseEncontrado_1185 !== null) {
-             break;
-         }
+        if (valorBaseEncontrado_1185 !== null) {
+            break;
+        }
     }
 
     if (valorBaseEncontrado_1185 !== null) {
@@ -2888,6 +2888,18 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
 
 
     if (correspondenciasEncontradas_6391 === 0) {
+        // A lógica de fallback para Parcela 1 não deve usar o 'mesdelancamento_2431' na chave do cache,
+        // pois ela é um fallback genérico para a transação, não para um mês específico.
+        // Portanto, usamos uma chave diferente para o fallback ou reconsideramos se o fallback deve ser cacheado.
+        // Para manter a lógica atual, vamos cachear o fallback com uma chave baseada apenas no ID.
+        const fallbackCacheKey_8912 = 'valorBaseParcelamentoFallback_' + idtransacao_2432;
+        const cachedFallbackValue_5239 = cache_3518.get(fallbackCacheKey_8912);
+
+        if (cachedFallbackValue_5239 !== null) {
+            return parseFloat(cachedFallbackValue_5239);
+        }
+
+
         for (let i = linhaDados_4982; i <= ultimaLinha_8306; i += batchSize_7492) {
             const currentBatchSize_8205 = Math.min(batchSize_7492, ultimaLinha_8306 - i + 1);
             const range_4691 = sheet_9527.getRange(i, 1, currentBatchSize_8205, numColunas_4827);
@@ -2900,20 +2912,20 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
 
                     const valorBase_7429 = parseFloat(linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['Valor Base']]);
                     if (isNaN(valorBase_7429)) {
-                         throw new Error(`Valor Base inválido encontrado para a primeira parcela (fallback) da ID da Transação ${idtransacao_2432} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+                        throw new Error(`Valor Base inválido encontrado para a primeira parcela (fallback) da ID da Transação ${idtransacao_2432} na planilha 'Parcelamentos no Cartão de Crédito'.`);
                     }
                     valorBaseEncontrado_1185 = valorBase_7429;
                     break;
                 }
             }
             if (valorBaseEncontrado_1185 !== null) {
-                 break;
+                break;
             }
         }
 
         if (valorBaseEncontrado_1185 !== null) {
-             cache_3518.put(cacheKey_7294, valorBaseEncontrado_1185.toString(), 1800);
-             return valorBaseEncontrado_1185;
+            cache_3518.put(fallbackCacheKey_8912, valorBaseEncontrado_1185.toString(), 1800);
+            return valorBaseEncontrado_1185;
         } else {
             throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431}, nem para a Parcela 1 da ID ${idtransacao_2432}, na planilha 'Parcelamentos no Cartão de Crédito'.`);
         }
