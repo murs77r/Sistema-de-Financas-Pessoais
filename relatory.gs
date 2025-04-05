@@ -2817,6 +2817,14 @@ function validarParametro_5243(valor_9582) {
 }
 
 function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431) {
+    const cache_3518 = CacheService.getScriptCache();
+    const cacheKey_7294 = 'valorBaseParcelamento_' + idtransacao_2432;
+    const cachedValue_6103 = cache_3518.get(cacheKey_7294);
+
+    if (cachedValue_6103 !== null) {
+        return parseFloat(cachedValue_6103);
+    }
+
     const spreadsheet_6248 = SpreadsheetApp.openById(spreedsheet_id());
     const sheet_9527 = spreadsheet_6248.getSheetByName('Parcelamentos no Cartão de Crédito');
     if (!sheet_9527) {
@@ -2843,6 +2851,7 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
     const numColunas_4827 = sheet_9527.getLastColumn();
 
     let correspondenciasEncontradas_6391 = 0;
+    let valorBaseEncontrado_1185 = null;
 
     for (let i = linhaDados_4982; i <= ultimaLinha_8306; i += batchSize_7492) {
         const currentBatchSize_8205 = Math.min(batchSize_7492, ultimaLinha_8306 - i + 1);
@@ -2863,10 +2872,20 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
                 if (isNaN(valorBase_7429)) {
                     throw new Error(`Valor Base inválido encontrado para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431} na planilha 'Parcelamentos no Cartão de Crédito'.`);
                 }
-                return valorBase_7429;
+                valorBaseEncontrado_1185 = valorBase_7429;
+                break;
             }
         }
+         if (valorBaseEncontrado_1185 !== null) {
+             break;
+         }
     }
+
+    if (valorBaseEncontrado_1185 !== null) {
+        cache_3518.put(cacheKey_7294, valorBaseEncontrado_1185.toString(), 1800);
+        return valorBaseEncontrado_1185;
+    }
+
 
     if (correspondenciasEncontradas_6391 === 0) {
         for (let i = linhaDados_4982; i <= ultimaLinha_8306; i += batchSize_7492) {
@@ -2881,13 +2900,23 @@ function obterValorBaseParcelamento_2412(idtransacao_2432, mesdelancamento_2431)
 
                     const valorBase_7429 = parseFloat(linha_5729[colunas_1495['Parcelamentos no Cartão de Crédito']['Valor Base']]);
                     if (isNaN(valorBase_7429)) {
-                        throw new Error(`Valor Base inválido encontrado para a primeira parcela (fallback) da ID da Transação ${idtransacao_2432} na planilha 'Parcelamentos no Cartão de Crédito'.`);
+                         throw new Error(`Valor Base inválido encontrado para a primeira parcela (fallback) da ID da Transação ${idtransacao_2432} na planilha 'Parcelamentos no Cartão de Crédito'.`);
                     }
-                    return valorBase_7429;
+                    valorBaseEncontrado_1185 = valorBase_7429;
+                    break;
                 }
             }
+            if (valorBaseEncontrado_1185 !== null) {
+                 break;
+            }
         }
-        throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431}, nem para a Parcela 1 da ID ${idtransacao_2432}, na planilha 'Parcelamentos no Cartão de Crédito'.`);
+
+        if (valorBaseEncontrado_1185 !== null) {
+             cache_3518.put(cacheKey_7294, valorBaseEncontrado_1185.toString(), 1800);
+             return valorBaseEncontrado_1185;
+        } else {
+            throw new Error(`Nenhuma correspondência encontrada para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431}, nem para a Parcela 1 da ID ${idtransacao_2432}, na planilha 'Parcelamentos no Cartão de Crédito'.`);
+        }
     }
 
     throw new Error(`Erro inesperado na lógica da função para ID da Transação ${idtransacao_2432} e Lançamento ${mesdelancamento_2431}.`);
