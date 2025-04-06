@@ -15,6 +15,8 @@ Os scripts deste repositório oferecem um conjunto abrangente de funcionalidades
 
 ## 📊 Atualizações Futuras
 
+- Refatorar o código de **RELATÓRIO DE TRANSAÇÕES** para evitar chamadas desnecessárias e/ou redundantes e performar melhor.
+- Refatorar o código de **CRIAÇÃO/ALTERAÇÃO DE EVENTOS** para performar melhor e criar lembretes mais alinhados à realidade.
 - Configurar uma integração ao **CLOUDFLARE R3** (com API), para facilitar a gestão de relatórios gerados.
 - Configurar o **RELATÓRIO DE TRANSAÇÕES** para adicionar uma tabela unificada das receitas e despesas mensais, configurando devidamente para a integração com a API do GEMINI.
 - Providenciar um sistema mais otimizado e eficiente para **GESTÃO DE ARQUIVOS** no Google Drive e geração de comprovantes no **GOOGLE DOCS** (Appsheet).
