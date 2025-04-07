@@ -12,7 +12,7 @@ function processarParcelamento_7394(id_2412) {
             'ID': 0, 'Procedimento': 1, 'Descrição': 2, 'Categoria': 3, 'Status': 4, 'Operador': 5, 'Data de Registro': 6, 'Horário de Registro': 7, 'Programado': 8, 'Data Programada': 9, 'Horário Programado': 10, 'Data de Efetivação': 11, 'Horário da Efetivação': 12, 'Lançamento Indicativo': 13, 'Indicativo de Mês': 14, 'Mês da Transação': 15, 'Indicativo de Ano': 16, 'Ano da Transação': 17, 'Parcelamento': 18, 'Quantidade de Parcelas': 19, 'Lançamento': 20, 'Cartão de Crédito': 21, 'Valor Base': 22, 'Taxas ou Impostos': 23, 'Sub-Total': 24, 'Total Efetivo': 25, 'Valor Individual/Parcela': 26, 'Termos do Serviço': 27, 'Documento Comprobatório': 28, 'Link do Documento Fiscal': 29, 'Observações': 30, 'Relevante para Imposto de Renda': 31, 'Registro de Atualização': 32, 'Última Atualização': 33, 'ID da Recorrência': 34
         },
         'Parcelamentos no Cartão de Crédito': {
-            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Data de Efetivação': 3, 'Horário da Efetivação': 4, 'Lançamento': 5, 'Cartão de Crédito': 6, 'Valor Base': 7, 'Valor Efetivo': 8, 'Observações': 9
+            'ID': 0, 'ID da Transação': 1, 'Parcela': 2, 'Data de Efetivação': 3, 'Horário da Efetivação': 4,'Lançamento': 5, 'Cartão de Crédito': 6, 'Valor Base': 7, 'Valor Efetivo': 8, 'Observações': 9
         }
     };
 
@@ -147,6 +147,8 @@ function processarParcelamento_7394(id_2412) {
             }
         }
     }
+
+    sincronizarDadosEntreTabelas_7891()
 
     const endTime_9385 = new Date();
 
