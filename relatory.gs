@@ -41,29 +41,10 @@ function gerarRelatorio_4752(tempo_8213, tipo_2956, operador_1853, datainicial_9
 
     const colunas_1495 = {
         'Transações com Saldo': {
-            'ID': 0, 'Procedimento': 1, 'Operação': 2, 'Descrição': 3, 'Categoria - Crédito': 4,
-            'Categoria - Débito': 5, 'Status': 6, 'Operador': 7, 'Data de Registro': 8,
-            'Horário de Registro': 9, 'Programado': 10, 'Data Programada': 11,
-            'Horário Programado': 12, 'Data de Efetivação': 13, 'Horário da Efetivação': 14,
-            'Mês da Transação': 15, 'Ano da Transação': 16, 'Conta de Origem': 17,
-            'Tipo de Conta de Origem': 18, 'Conta de Destino': 19, 'Tipo de Conta de Destino': 20,
-            'Valor Base': 21, 'Taxas ou Impostos': 22, 'Sub-Total': 23, 'Total Efetivo': 24, 'Termos do Serviço': 25,
-            'Documento Comprobatório': 26, 'Link do Documento Fiscal': 27, 'Observações': 28,
-            'Relevante para Imposto de Renda': 29, 'Registro de Atualização': 30,
-            'Última Atualização': 31, 'ID de Recorrência': 32
+            'ID': 0, 'Procedimento': 1, 'Operação': 2, 'Descrição': 3, 'Categoria - Crédito': 4, 'Categoria - Débito': 5, 'Status': 6, 'Operador': 7, 'Data de Registro': 8, 'Horário de Registro': 9, 'Programado': 10, 'Data Programada': 11, 'Horário Programado': 12, 'Data de Efetivação': 13, 'Horário da Efetivação': 14, 'Mês da Transação': 15, 'Ano da Transação': 16, 'Conta de Origem': 17, 'Tipo de Conta de Origem': 18, 'Conta de Destino': 19, 'Tipo de Conta de Destino': 20, 'Valor Base': 21, 'Taxas ou Impostos': 22, 'Sub-Total': 23, 'Total Efetivo': 24, 'Termos do Serviço': 25, 'Documento Comprobatório': 26, 'Link do Documento Fiscal': 27, 'Observações': 28, 'Relevante para Imposto de Renda': 29, 'Registro de Atualização': 30, 'Última Atualização': 31, 'ID de Recorrência': 32
         },
         'Transações com Cartão de Crédito': {
-            'ID': 0, 'Procedimento': 1, 'Descrição': 2, 'Categoria': 3, 'Status': 4, 'Operador': 5,
-            'Data de Registro': 6, 'Horário de Registro': 7, 'Programado': 8, 'Data Programada': 9,
-            'Horário Programado': 10, 'Data de Efetivação': 11, 'Horário da Efetivação': 12,
-            'Lançamento Indicativo': 13, 'Indicativo de Mês': 14, 'Mês da Transação': 15,
-            'Indicativo de Ano': 16, 'Ano da Transação': 17, 'Parcelamento': 18,
-            'Quantidade de Parcelas': 19, 'Lançamento': 20, 'Cartão de Crédito': 21,
-            'Valor Base': 22, 'Taxas ou Impostos': 23, 'Sub-Total': 24, 'Total Efetivo': 25,
-            'Valor Individual/Parcela': 26, 'Termos do Serviço': 27, 'Documento Comprobatório': 28,
-            'Link do Documento Fiscal': 29, 'Observações': 30,
-            'Relevante para Imposto de Renda': 31, 'Registro de Atualização': 32,
-            'Última Atualização': 33, 'ID da Recorrência': 34
+            'ID': 0, 'Procedimento': 1, 'Descrição': 2, 'Categoria': 3, 'Status': 4, 'Operador': 5, 'Data de Registro': 6, 'Horário de Registro': 7, 'Programado': 8, 'Data Programada': 9, 'Horário Programado': 10, 'Data de Efetivação': 11, 'Horário da Efetivação': 12, 'Lançamento Indicativo': 13, 'Indicativo de Mês': 14, 'Mês da Transação': 15, 'Indicativo de Ano': 16, 'Ano da Transação': 17, 'Parcelamento': 18, 'Quantidade de Parcelas': 19, 'Lançamento': 20, 'Cartão de Crédito': 21, 'Valor Base': 22, 'Taxas ou Impostos': 23, 'Sub-Total': 24, 'Total Efetivo': 25, 'Valor Individual/Parcela': 26, 'Termos do Serviço': 27, 'Documento Comprobatório': 28, 'Link do Documento Fiscal': 29, 'Observações': 30, 'Relevante para Imposto de Renda': 31, 'Registro de Atualização': 32, 'Última Atualização': 33, 'ID da Recorrência': 34
         }
     };
 
@@ -2173,7 +2154,7 @@ function processarGemini_5312(dados_9140, dados1243 = undefined) {
             }
         };
 
-        const url_7319 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro-exp-03-25:generateContent?key=" + API_KEY_2957;
+        const url_7319 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent?key=" + API_KEY_2957;
 
         const options_1846 = {
             method: "post",
