@@ -54,8 +54,8 @@ function sincronizarDadosEntreTabelas_7891() {
     const transacoesSheet_9571 = sheets_5721['Transações com Saldo'];
     const faturasSheet_1598 = sheets_5721['Faturas de Cartões de Crédito'];
     const today_6548 = new Date();
-    today_6548.setDate(0);
-    today_6548.setHours(23, 59, 59, 999);
+    today_6548.setDate(0); 
+    today_6548.setHours(23, 59, 59, 999); 
 
     const numRowsFaturas_1234 = faturasSheet_1598.getDataRange().getValues().length - 1;
     const batchSize_3947 = Math.max(25, Math.min(250, Math.round(numRowsFaturas_1234 * 0.15)));
@@ -147,7 +147,7 @@ function sincronizarDadosEntreTabelas_7891() {
 
             let transacaoEncontrada_5698 = false;
             let transacaoLinha_8567 = null;
-            transacaoEncontrada_5698 = false;
+            transacaoEncontrada_5698 = false; 
 
             const indicesDuplicatas_9123 = [];
             for (let i = 0; i < transacoesData_3185.length; i++) {
@@ -334,17 +334,12 @@ function sincronizarDadosEntreTabelas_7891() {
 
                 linhas_para_inserir_6392.push(novaLinha_5896);
 
-                const dataVencimentoFormatada_9874 = Utilities.formatDate(vencimentoFatura_7412, "GMT-3", "dd/MM/yyyy");
-                const dataHojeFormatada_6541 = Utilities.formatDate(today_6548, "GMT-3", "dd/MM/yyyy");
+                const dataVencimentoFormatada_9874 = Utilities.formatDate(new Date(vencimentoFatura_7412.setHours(14, 0, 0, 0)), "GMT-3", "yyyy-MM-dd'T'HH:mm:ss");
                 const dataFechamentoformatada_3578 = Utilities.formatDate(fechamentoFatura_9871, "GMT-3", "dd/MM/yyyy");
                 const descricaoEvento_2589 = `Fatura referente a ${mesAnoReferencia_2684}, com fechamento em ${dataFechamentoformatada_3578}`;
-                const tituloEvento_8593 = `Pagamento de Fatura em ${nomeCartao_6359}`;
+                const tituloEvento_8593 = `Pagamento de Fatura (Cartão ${nomeCartao_6359})`;
 
-                if (dataVencimentoFormatada_9874 === dataHojeFormatada_6541) {
-                    criarouatualizareventodehoje_9876(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593, "14:00");
-                } else {
-                    criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593, "14:00");
-                }
+                criarouatualizarcalendarioevento_5278(dataVencimentoFormatada_9874, id_fatura_3698, descricaoEvento_2589, tituloEvento_8593);
             }
 
             if (faturaRow[colunas_1495['Faturas de Cartões de Crédito']['Arquivo da Fatura']]) {
