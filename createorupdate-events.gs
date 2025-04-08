@@ -1,122 +1,110 @@
-function criarouatualizarcalendarioevento_5278(dataProgramada, identificador, descricao, apresentacao, timestring) {
-    if (typeof dataProgramada === 'string' || typeof dataProgramada === 'number') {
-        if (typeof dataProgramada === 'string' && dataProgramada.includes('/')) {
-            const [day, month, year] = dataProgramada.split('/');
-            dataProgramada = new Date(year, month - 1, day);
-        } else {
-          dataProgramada = new Date(dataProgramada);
+function criarouatualizarcalendarioevento_5278(dataHorarioStr, identificador, descricao, apresentacao) {
+    try {
+        const dataHorarioParam = new Date(dataHorarioStr);
+        if (isNaN(dataHorarioParam.getTime())) {
+            throw new Error(`Formato inválido para 'Data e Horário': ${dataHorarioStr}`);
         }
-    }
-    if (!(dataProgramada instanceof Date)) {
-        return;
-    }
 
-    const dataProgramada_sem_hora = new Date(dataProgramada.getFullYear(), dataProgramada.getMonth(), dataProgramada.getDate());
-    const hoje_sem_hora = new Date();
-    hoje_sem_hora.setHours(0, 0, 0, 0);
-
-    if (dataProgramada_sem_hora.getTime() === hoje_sem_hora.getTime()) {
-        criarouatualizareventodehoje_9876(dataProgramada, identificador, descricao, apresentacao, timestring);
-        return;
-    }
-
-    const titulo_evento = apresentacao;
-    const [hora] = timestring.split(':').map(Number);
-    const data_hora_inicio = new Date(dataProgramada);
-    data_hora_inicio.setHours(hora, 0, 0, 0);
-
-    const calendar = CalendarApp.getDefaultCalendar();
-    const start_date = new Date('1970-01-01');
-    const end_date = new Date('2150-01-01');
-    const eventos = calendar.getEvents(start_date, end_date);
-
-    for (let i = 0; i < eventos.length; i++) {
-        if (eventos[i].getTag('identificador') === identificador || eventos[i].getDescription().includes(identificador)) {
-            eventos[i].deleteEvent();
+        const calendarId = 'primary';
+        const calendar = CalendarApp.getCalendarById(calendarId);
+        if (!calendar) {
+            throw new Error(`Calendário com ID '${calendarId}' não encontrado.`);
         }
-    }
 
-    const evento = calendar.createEvent(titulo_evento, data_hora_inicio, new Date(data_hora_inicio.getTime() + 60 * 60 * 1000), {
-        description: descricao
-    });
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
 
-    evento.setTag('identificador', identificador);
-    evento.addEmailReminder(18 * 60);
-    evento.addPopupReminder(18 * 60);
-    evento.addPopupReminder(2 * 60);
-    evento.addPopupReminder(0);
+        const inicioBusca = new Date();
+        inicioBusca.setFullYear(inicioBusca.getFullYear() - 50);
+        const fimBusca = new Date();
+        fimBusca.setFullYear(fimBusca.getFullYear() + 50);
+
+        const targetTimes = calcularHorarioEvento_2151(dataHorarioParam);
+
+        const eventosPotenciais = calendar.getEvents(inicioBusca, fimBusca);
+        const eventosEncontrados = eventosPotenciais.filter(evento => evento.getTag('identificador') === identificador);
+
+        let eventoExisteECorreto = false;
+        eventosEncontrados.forEach(evento => {
+            const inicioEvento = evento.getStartTime();
+            const fimEvento = evento.getEndTime();
+            const tituloEvento = evento.getTitle();
+            const descricaoEvento = evento.getDescription();
+
+            if (
+                inicioEvento.getTime() === targetTimes.startTime.getTime() &&
+                fimEvento.getTime() === targetTimes.endTime.getTime() &&
+                tituloEvento === apresentacao &&
+                descricaoEvento === descricao
+            ) {
+                eventoExisteECorreto = true;
+            } else {
+                try {
+                    evento.deleteEvent();
+                } catch (deleteError) { }
+            }
+        });
+
+        if (!eventoExisteECorreto) {
+            const novoEvento = calendar.createEvent(
+                apresentacao,
+                targetTimes.startTime,
+                targetTimes.endTime,
+                {
+                    description: descricao
+                }
+            );
+
+            novoEvento.setTag('identificador', identificador);
+
+            novoEvento.addPopupReminder(30);
+            novoEvento.addPopupReminder(0);
+
+            const agora = new Date();
+            const vinteQuatroHorasEmMillis = 24 * 60 * 60 * 1000;
+            const horaLembrete24h = new Date(targetTimes.startTime.getTime() - vinteQuatroHorasEmMillis);
+
+            if (horaLembrete24h.getTime() > agora.getTime()) {
+                novoEvento.addEmailReminder(24 * 60);
+            }
+        }
+
+    } catch (error) { }
 }
 
-function criarouatualizareventodehoje_9876(dataProgramada, identificador, descricao, apresentacao, time_string) {
-    if (typeof dataProgramada === 'string' || typeof dataProgramada === 'number') {
-        if (typeof dataProgramada === 'string' && dataProgramada.includes('/')) {
-            const [day, month, year] = dataProgramada.split('/');
-            dataProgramada = new Date(year, month - 1, day);
-        } else {
-            dataProgramada = new Date(dataProgramada);
-        }
-    }
-    if (!(dataProgramada instanceof Date)) {
-        return;
-    }
-    
-    const titulo_evento = apresentacao;
-    const data_hora_inicio = new Date(dataProgramada);
+function calcularHorarioEvento_2151(dataHorarioParam) {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
     const agora = new Date();
-    let horas = agora.getHours();
-    let minutos = agora.getMinutes();
-    let segundos = agora.getSeconds();
 
-    if (time_string instanceof Date) {
-        horas = time_string.getHours();
-        minutos = time_string.getMinutes();
-        segundos = time_string.getSeconds();
-    } else if (typeof time_string === 'string') {
-        const [h, m, s] = time_string.split(':');
-        if (h && m && s) {
-            horas = parseInt(h, 10);
-            minutos = parseInt(m, 10);
-            segundos = parseInt(s, 10);
+    const dataEvento = new Date(dataHorarioParam);
+    dataEvento.setHours(0, 0, 0, 0);
+
+    let horaInicioCalculada;
+    const horaParamOriginal = dataHorarioParam.getHours();
+    const horaParamArredondada = Math.floor(horaParamOriginal);
+
+    if (dataEvento.getTime() !== hoje.getTime()) {
+        if (horaParamOriginal >= 6 && horaParamOriginal < 22) {
+            horaInicioCalculada = horaParamArredondada;
+        } else {
+            horaInicioCalculada = 14;
         }
-    } else if (typeof time_string === 'number') {
-        const timestamp_date = new Date(time_string);
-        horas = timestamp_date.getHours();
-        minutos = timestamp_date.getMinutes();
-        segundos = timestamp_date.getSeconds();
-    }
-
-    if (minutos > 0 || segundos > 0) {
-        horas += 1;
-    }
-
-    const time_string_hora = new Date();
-    time_string_hora.setHours(horas, 0, 0, 0);
-
-    const agora_hora = new Date();
-    agora_hora.setHours(agora.getHours(), 0, 0, 0);
-
-    if (time_string_hora > agora_hora) {
-        data_hora_inicio.setHours(horas, 0, 0);
     } else {
-        data_hora_inicio.setHours(agora.getHours() + 2, 0, 0);
-    }
-
-    const calendar = CalendarApp.getDefaultCalendar();
-    const start_date = new Date('1970-01-01');
-    const end_date = new Date('2150-01-01');
-    const eventos = calendar.getEvents(start_date, end_date);
-
-    for (let i = 0; i < eventos.length; i++) {
-        if (eventos[i].getTag('identificador') === identificador || eventos[i].getDescription().includes(identificador)) {
-            eventos[i].deleteEvent();
+        const horaAtual = agora.getHours();
+        if (horaParamArredondada <= horaAtual) {
+            horaInicioCalculada = horaAtual + 1;
+        } else {
+            horaInicioCalculada = horaParamArredondada;
         }
     }
 
-    const evento = calendar.createEvent(titulo_evento, data_hora_inicio, new Date(data_hora_inicio.getTime() + 60 * 60 * 1000), { description: descricao });
-    evento.setTag('identificador', identificador);
-    evento.addPopupReminder(0);
-    evento.addPopupReminder(30);
-    evento.addPopupReminder(60 * 1);
+    const startTime = new Date(dataHorarioParam);
+    startTime.setHours(horaInicioCalculada, 0, 0, 0);
+
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+
+    return { startTime, endTime };
 }
 
 function deletareventoporidentificador_4739(identificador) {
