@@ -15,6 +15,7 @@ Os scripts deste repositório oferecem um conjunto abrangente de funcionalidades
 
 ## 📊 Atualizações Futuras
 
+- Adicionar uma opção para **LEMBRETES SEMANAIS** de compromissos via e-mail.
 - Refatorar o código de **RELATÓRIO DE TRANSAÇÕES** para evitar chamadas desnecessárias e/ou redundantes e performar melhor.
 - Configurar uma integração ao **CLOUDFLARE R3** (com API), para facilitar a gestão de relatórios gerados.
 - Configurar o **RELATÓRIO DE TRANSAÇÕES** para adicionar uma tabela unificada das receitas e despesas mensais, configurando devidamente para a integração com a API do GEMINI.
