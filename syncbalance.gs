@@ -47,6 +47,9 @@ function atualizarSaldoContas_1234() {
             criarLinhaTabela2_1234(tabela2Sheet_3456, rowTabela1_4567, "Movimentação");
             criarLinhaTabela2_1234(tabela2Sheet_3456, rowTabela1_4567, "Investimentos");
             Logger.log(`Instituição: ${instituicaoTabela1_8901}, Tipo: ${tipoContaTabela1_2345}, Habilitação para Investimentos: Sim, Criando linhas para Movimentação e Investimentos.`);
+        } else if (tipoContaTabela1_2345 === "Benefício") {
+            criarLinhaTabela2_1234(tabela2Sheet_3456, rowTabela1_4567, "Benefício");
+            Logger.log(`Instituição: ${instituicaoTabela1_8901}, Tipo: ${tipoContaTabela1_2345}, Criando linha para benefício.`);
         } else {
             criarLinhaTabela2_1234(tabela2Sheet_3456, rowTabela1_4567, "Movimentação");
             Logger.log(`Instituição: ${instituicaoTabela1_8901}, Tipo: ${tipoContaTabela1_2345}, Habilitação para Investimentos: Não, Criando linha para Movimentação.`);
