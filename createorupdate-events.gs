@@ -101,8 +101,7 @@ function calcularHorarioEvento_2151(dataHorarioParam) {
 
     const startTime = new Date(dataHorarioParam);
     startTime.setHours(horaInicioCalculada, 0, 0, 0);
-
-    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+    const endTime = new Date(startTime.getTime());
 
     return { startTime, endTime };
 }
