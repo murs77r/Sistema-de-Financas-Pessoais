@@ -19,7 +19,7 @@ function transferir_saldos_bancarios_1654() {
 
 
     dados_origem_1230.forEach(linha_9876 => {
-        if (linha_9876[3] >= 0.01 && linha_9876[2] === "Movimentação") {
+        if (linha_9876[3] !== 0 && linha_9876[2] !== "Investimentos") {
             const id_aleatorio_6543 = `N${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
             const nova_linha_0987 = [
                 id_aleatorio_6543,

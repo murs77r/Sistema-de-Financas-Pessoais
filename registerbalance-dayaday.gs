@@ -6,7 +6,7 @@ function processar_dados_planilha_2873() {
     const dados_tabela_origem_1290 = planilha_origem_5432.getRange(2, 1, planilha_origem_5432.getLastRow() - 1, planilha_origem_5432.getLastColumn()).getValues();
 
     const novos_dados_tabela_6734 = dados_tabela_origem_1290
-        .filter(linha => Math.abs(linha[3]) > 0.01)
+        .filter(linha => Math.abs(linha[3]) !== 0)
         .map(linha => {
             const id_unico_9876 = `B${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
             const data_ontem_2345 = new Date();
